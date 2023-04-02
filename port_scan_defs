@@ -1,0 +1,38 @@
+import socket
+import user_inter_face
+def all():
+    print("\n------------------------------------------------")
+    print("1- all ports\n2- choes ports range")
+    por = input("enter number : ")
+    """ fix the * and M and Q """
+    def port_scan(target_host, start_port, end_port):
+        for port in range(start_port, end_port + 1):
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # create a socket object
+            sock.settimeout(1) # set the timeout for the connection attempt
+            result = sock.connect_ex((target_host, port)) # attempt to connect to the target host and port
+            if result == 0: # if the connection was successful, print the open port number
+                print(f"Port {port} is open")
+            sock.close()
+
+    if por == "1":
+        print("\n------------------------------------------------")
+        target_host = input("Enter the target host: ")
+        port_scan(target_host,1,65535)
+    elif por == "2":
+        print("\n------------------------------------------------")
+        target_host = input("Enter the target host: ")
+        start_port = int(input("Enter the start port number: "))
+        end_port = int(input("Enter the end port number: "))
+        port_scan(target_host, start_port, end_port)
+    elif por == "*":
+        print("\n------------------------------------------------")
+        user_inter_face.scanning()
+    elif por == "m" or por == "M":
+        user_inter_face.start_all()
+    elif por == "q" or por == "Q":
+        user_inter_face.queet()
+    else:
+        print("\n*********************************************")
+        print("\n******* Wrong value ********")
+        print("\n*********************************************")
+    port_scan(target_host, start_port, end_port) # call the port_scan function
