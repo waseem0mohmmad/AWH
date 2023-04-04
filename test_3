@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import scapy as sc
-#import AWH_font_styl
+import AWH_font_styl
 from scapy.layers.l2 import ARP,Ether,srp
 import socket
+import subprocess
 # import scanning_defs as scn
 #import port_scan_defs as port_scan_op
 AWH_font_styl.fontStyl()
@@ -63,28 +64,27 @@ def start_all(): #main menu (M)
                                     print("\n------------------------------------------------")
                                     ip = input("enter ip add : ")
                                     final_result = []
-                                    def display_result():
-                                        print("-----------------------------------\nIP Address\tMAC Address\n-----------------------------------")
+                                    def display_result(final_result):
+                                        print("----------------------------------------")
+                                        print("IP\t\tMAC ADDRESS")
+                                        print("-----------------------------------------")
                                         for i in final_result:
-                                            print("{}\t{}".format(i["ip"], i["mac"]))
+                                            print("{}\t{}".format(i["ip"], i["mac"],))
+                                        print("------------------------------------------")
                                     def scan():  # network scanning
-                                        # print("\n------------------------------------------------")
-                                        # ip = input("enter ip add : ")
-                                        print("in def scan try")
                                         result = []
                                         arp_req = ARP(pdst=ip)
                                         broadcast_eth = Ether(dst="ff:ff:ff:ff:ff:ff")
                                         broadcast_eth_arp_req_ = broadcast_eth / arp_req
                                         ans_ls = srp(broadcast_eth_arp_req_, timeout=1, verbose=False)[0]
                                         for i in range(0, len(ans_ls)):
-                                            print("in for loop")
-                                            # client_dict = {"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc}
-                                            result.append(final_result)
-                                            display_result()
+                                            result.append({"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc})
+                                            result=final_result  #################### chek if the result will save in final_result or the opposite
                                             quit(scan())
+                                        display_result(final_result)
+
                                         info_store = final_result  # add f kye for in into inter face
                                         if len(result) == 0 :
-                                            print(ip)
                                             print("\n*********************************************")
                                             print("\n******* can not finde IP add ********")
                                             print("\n*********************************************")
@@ -101,8 +101,6 @@ def start_all(): #main menu (M)
                                     elif ip == "q" or ip == "Q":
                                         queet()
                                     else:
-                                        print(ip)
-                                        print(type(ip))
                                         print("\n*********************************************")
                                         print("\n******* Wrong value ********")
                                         print("\n*********************************************")
@@ -115,34 +113,79 @@ def start_all(): #main menu (M)
                                     por = input("enter number : ")
                                     """ fix the * and M and Q """
                                     final_result = []
-                                    def display_result():
-                                        print(
-                                            "-----------------------------------\nports\t"     "\n-----------------------------------")
+
+
+                                    def display_result(final_result):
+                                        print("---------------------------------------------------------")
+                                        print("IP\t\tMAC ADDRESS\t\tOPEN PORTS")
+                                        print("---------------------------------------------------------")
                                         for i in final_result:
-                                            print("{}\t{}".format(i["ip"], i["mac"]))
-                                    def port_scan(target_host, start_port, end_port):
-                                        for port in range(start_port, end_port + 1):
-                                            sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  # create a socket object
-                                            sock.settimeout(1)  # set the timeout for the connection attempt
-                                            result = sock.connect_ex((target_host, port))  # attempt to connect to the target host and port
-                                            final_result.append((port,result))
-                                            # if result == 0:  # if the connection was successful, print the open port number
-                                            #     print(f"Port {port} is open")
-                                            display_result()
+                                            print("{}\t{}\t{}".format(i["ip"], i["mac"], i["ports"]))
+                                        print("---------------------------------------------------------")
+
+                                    def port_scan(target_host, start_port, end_port):#
+                                        result = []
+                                        arp_req = ARP(pdst=target_host)
+                                        broadcast_eth = Ether(dst="ff:ff:ff:ff:ff:ff")
+                                        broadcast_eth_arp_req_ = broadcast_eth / arp_req
+                                        ans_ls = srp(broadcast_eth_arp_req_, timeout=1, verbose=False)[0]
+                                        if len(result) != 0:
+                                            # for i in range(0, len(ans_ls)):
+                                            #     result.append({"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc})
+                                            for port in range(start_port, end_port + 1):
+                                                sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  # create a socket object
+                                                sock.settimeout(1)# set the timeout for the connection attempt
+                                                result = sock.connect_ex((target_host, port))  # attempt to connect to the target host and port
+                                                final_result.append((port,result))
+                                            if result == 0:  # if the connection was successful, print the open port number
+                                                #final_result.append({"ip":target_host,"ma":mac_address, "ports": port})
+                                                result.append({"ip":target_host, "mac": ans_ls[port][1].hwsrc,"ports": port})
                                             sock.close()
-    
+                                        elif len(result) == 0:
+                                            print("\n*********************************************")
+                                            print("\n******* can not finde IP add ********")
+                                            print("\n*********************************************")
+                                            por_scan()
+                                        display_result(final_result)
+
+                                    ss = ["*", "q", "Q", "m", "M"]
                                     if por == "1":
                                         print("\n------------------------------------------------")
                                         target_host = input("Enter the target host: ")
-                                        port_scan(target_host=target_host, start_port=1, end_port=65535)
+                                        if target_host not in ss:
+                                            port_scan(target_host=target_host, start_port=1, end_port=65535)
+                                        elif target_host == "*":
+                                            other_device()
+                                        elif target_host == "m" or target_host == "M":
+                                            pass
+                                            start_all()
+                                        elif target_host == "q" or target_host == "Q":
+                                            queet()
+                                        else:
+                                            print("\n*********************************************")
+                                            print("\n******* Wrong value ********")
+                                            print("\n*********************************************")
+                                            por_scan()
                                     elif por == "2":
                                         print("\n------------------------------------------------")
                                         target_host = input("Enter the target host: ")
-                                        start_port = int(input("Enter the start port number: "))
-                                        end_port = int(input("Enter the end port number: "))
-                                        port_scan(target_host=target_host, start_port=start_port, end_port=end_port)
+                                        if target_host not in ss:
+                                            start_port = int(input("Enter the start port number: "))
+                                            end_port = int(input("Enter the end port number: "))
+                                            port_scan(target_host=target_host, start_port=start_port, end_port=end_port)
+                                        elif target_host == "*":
+                                            other_device()
+                                        elif target_host == "m" or target_host == "M":
+                                            pass
+                                            start_all()
+                                        elif target_host == "q" or target_host == "Q":
+                                            queet()
+                                        else:
+                                            print("\n*********************************************")
+                                            print("\n******* Wrong value ********")
+                                            print("\n*********************************************")
+                                            por_scan()
                                     elif por == "*":
-                                        print("\n------------------------------------------------")
                                         other_device()
                                     elif por == "m" or por == "M":
                                         start_all()
