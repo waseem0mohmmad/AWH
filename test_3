@@ -1,0 +1,294 @@
+#!/usr/bin/env python3
+import scapy as sc
+#import AWH_font_styl
+from scapy.layers.l2 import ARP,Ether,srp
+import socket
+# import scanning_defs as scn
+#import port_scan_defs as port_scan_op
+AWH_font_styl.fontStyl()
+print("AWH giving you many option to sccane , sniffe , descover your network") #chang it another
+print("\n------------------------------------------------")
+def queet():
+    quit()
+def start_all(): #main menu (M)
+    print("[+] *  Back for previous page\n[+] M  For main menu\n[+] Q  For quit the tool ")
+    print("------------------------------------------------")
+    print("1-Get started\n2-Help\n3-About")  # desine it
+    intfc=input("enter number : ")
+    if intfc=="1":#get start
+        print("\n------------------------------------------------")
+        def get_started():
+            print("1-scanning\n2-sniffing\n*-back")
+            num=input("enter numer : ")
+            if num=="1":#scanning
+                print("\n------------------------------------------------")
+                def scanning():
+                    print("1-THIS DEVICE\n2-OTHER DEVICE\n*-back")
+                    scan=input("enter number : ")
+                    if scan == "1": #this device
+                        print("\n------------------------------------------------")
+                        print("1-NETWORK SCANNING\n2-PORT SCANNING\n3-VULNERABILITY SCANNING\n*-back")
+                        scan1=input("enter number : ")
+                        if scan1=="1":
+                            def net_scane():
+                                print("")
+                                #scanning.get_mac
+                            net_scane()
+                        elif scan1=="2":
+                            def port_scan():
+                                print("")
+                            port_scan()
+                        elif scan1=="2":
+                            def vul_scan():
+                                print("")
+                            vul_scan()
+                        elif scan1=="*":
+                            print("\n------------------------------------------------")
+                            scanning()
+                        elif scan1 == "m" or num == "M":
+                            start_all()
+                        elif scan1 == "q" or num == "Q":
+                            queet()
+                        else:
+                            print("\n*********************************************")
+                            print("\n******* Wrong value ********")
+                            print("\n*********************************************")
+                    elif scan =="2":#other device
+                        def other_device():
+                            print("\n------------------------------------------------")
+                            print("1-Network scanning\n2-Port scanning\n*-back")
+                            scan2=input("enter number : ")
+                            if scan2 == "1": #network scan
+                                def net_scan():
+                                    print("\n------------------------------------------------")
+                                    ip = input("enter ip add : ")
+                                    final_result = []
+                                    def display_result():
+                                        print("-----------------------------------\nIP Address\tMAC Address\n-----------------------------------")
+                                        for i in final_result:
+                                            print("{}\t{}".format(i["ip"], i["mac"]))
+                                    def scan():  # network scanning
+                                        # print("\n------------------------------------------------")
+                                        # ip = input("enter ip add : ")
+                                        print("in def scan try")
+                                        result = []
+                                        arp_req = ARP(pdst=ip)
+                                        broadcast_eth = Ether(dst="ff:ff:ff:ff:ff:ff")
+                                        broadcast_eth_arp_req_ = broadcast_eth / arp_req
+                                        ans_ls = srp(broadcast_eth_arp_req_, timeout=1, verbose=False)[0]
+                                        for i in range(0, len(ans_ls)):
+                                            print("in for loop")
+                                            # client_dict = {"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc}
+                                            result.append(final_result)
+                                            display_result()
+                                            quit(scan())
+                                        info_store = final_result  # add f kye for in into inter face
+                                        if len(result) == 0 :
+                                            print(ip)
+                                            print("\n*********************************************")
+                                            print("\n******* can not finde IP add ********")
+                                            print("\n*********************************************")
+                                            net_scan()
+
+                                    ss = ["*", "q", "Q", "m", "M"]
+                                    if ip not in ss:
+                                        scan()
+                                    elif ip == "*":
+                                        other_device()
+                                    elif ip == "m" or ip == "M":
+                                        pass
+                                        start_all()
+                                    elif ip == "q" or ip == "Q":
+                                        queet()
+                                    else:
+                                        print(ip)
+                                        print(type(ip))
+                                        print("\n*********************************************")
+                                        print("\n******* Wrong value ********")
+                                        print("\n*********************************************")
+                                        net_scan()
+                                net_scan()
+                            elif scan2 == "2": #port scan
+                                def por_scan():
+                                    print("\n------------------------------------------------")
+                                    print("1- all ports\n2- choes ports range")
+                                    por = input("enter number : ")
+                                    """ fix the * and M and Q """
+                                    final_result = []
+                                    def display_result():
+                                        print(
+                                            "-----------------------------------\nports\t"     "\n-----------------------------------")
+                                        for i in final_result:
+                                            print("{}\t{}".format(i["ip"], i["mac"]))
+                                    def port_scan(target_host, start_port, end_port):
+                                        for port in range(start_port, end_port + 1):
+                                            sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  # create a socket object
+                                            sock.settimeout(1)  # set the timeout for the connection attempt
+                                            result = sock.connect_ex((target_host, port))  # attempt to connect to the target host and port
+                                            final_result.append((port,result))
+                                            # if result == 0:  # if the connection was successful, print the open port number
+                                            #     print(f"Port {port} is open")
+                                            display_result()
+                                            sock.close()
+    
+                                    if por == "1":
+                                        print("\n------------------------------------------------")
+                                        target_host = input("Enter the target host: ")
+                                        port_scan(target_host=target_host, start_port=1, end_port=65535)
+                                    elif por == "2":
+                                        print("\n------------------------------------------------")
+                                        target_host = input("Enter the target host: ")
+                                        start_port = int(input("Enter the start port number: "))
+                                        end_port = int(input("Enter the end port number: "))
+                                        port_scan(target_host=target_host, start_port=start_port, end_port=end_port)
+                                    elif por == "*":
+                                        print("\n------------------------------------------------")
+                                        other_device()
+                                    elif por == "m" or por == "M":
+                                        start_all()
+                                    elif por == "q" or por == "Q":
+                                        queet()
+                                    else:
+                                        print("\n*********************************************")
+                                        print("\n******* Wrong value ********")
+                                        print("\n*********************************************")
+                                        por_scan()
+                                por_scan()
+                            elif scan2=="*":
+                                print("\n------------------------------------------------")
+                                scanning()
+
+                            elif scan2 == "m" or num == "M":
+                                start_all()
+                            elif scan2 == "q" or num == "Q":
+                                queet()
+                            else:
+                                print("\n*********************************************")
+                                print("\n******* Wrong value ********")
+                                print("\n*********************************************")
+                                other_device()
+                        other_device()
+                    elif scan =="*": #back for scanning
+                        print("\n------------------------------------------------")
+                        scanning()
+                    elif scan == "m" or num == "M":
+                        start_all()
+                    elif scan == "q" or num == "Q":
+                        queet()
+                    else:
+                        print("\n*********************************************")
+                        print("\n******* Wrong value ********")
+                        print("\n*********************************************")
+                        scanning()
+                scanning()
+            elif num=="2":#sniffing
+                print("\n------------------------------------------------")
+                def sniffing():
+                    print("1-all\n2-HTTP\n3-TCP\n4-UDP\n5-IP\n*-back")
+                    sniff=input("enter number : ")
+                    if sniff == "1":
+                        print("")
+                    elif sniff=="2":
+                        def http_sniff():
+                            print("")
+                        http_sniff()
+                    elif sniff=="3":
+                        def tcp_sniff():
+                            print("")
+                        tcp_sniff()
+                    elif sniff=="4":
+                        def udp_sniff():
+                            print("")
+                        udp_sniff()
+                    elif sniff=="5":
+                        def ip_sniff():
+                            print("")
+                        ip_sniff()
+                    elif sniff == "*":
+                        print("\n------------------------------------------------")
+                        get_started()
+                    elif sniff == "m" or num == "M":
+                        start_all()
+                    elif sniff == "q" or num == "Q":
+                        queet()
+
+                    else:
+                        print("\n*********************************************")
+                        print("\n******* Wrong value ********")
+                        print("\n*********************************************")
+                        sniffing()
+                sniffing()                                   #future working make a discovering
+            elif num == "*":#back for start all
+                print("\n------------------------------------------------")
+                start_all()
+            elif num == "m" or num == "M":
+                start_all()
+            elif num == "q" or num == "Q":
+                queet()
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value ********")
+                print("\n*********************************************")
+                get_started()
+        get_started()
+    elif intfc=="2":#help
+        print("\n------------------------------------------------")
+        def help():
+            print("1-How to scan the Network\n2-How to sniff the Network\n3-How to discover the Network\n*-Back")
+            num = input("enter numer : ")
+
+            if num == "1" or num == "2" or num == "3" :
+                if num=="1":#How to scan the Network
+                    print("\n------------------------------------------------")
+                    print("")
+                elif num=="2":#How to sniff the Network
+                    print("\n------------------------------------------------")
+                    print("")
+                elif num=="3":#How to discover the Network
+                    print("\n------------------------------------------------")
+                    print("")
+                elif num == "m" or num == "M":
+                    start_all()
+                elif num == "q" or num == "Q":
+                    quit
+            elif num == "*":
+                    start_all()
+            elif num == "m" or num == "M":
+                start_all()
+            elif num == "q" or num == "Q":
+                queet()
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value ********")
+                print("\n*********************************************")
+                help()
+        help()
+    elif intfc=="3":#about
+        print("\n------------------------------------------------")
+        def about():
+            #print("\n------------------------------------------------")
+            print("This tool is specialized in a number of tasks that may benefit you in SCAN , SNIFF or DISCOVER your private network or in your Penetration testing. ")
+            print("created by:\n.Ahmad Almasharqa \n.Waseem Mohammad  \n.Hanin Hashaikah ")
+            back=input("\npress * to back to main menu\n")
+
+            if back == "*":
+                start_all()
+            elif back == "m" or back == "M":
+                start_all()
+            elif back == "q" or back == "Q":
+                queet()
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value ********")
+                print("\n*********************************************")
+                about()
+        about()
+    elif intfc == "q" or intfc == "Q":
+        queet()
+    else:
+        print("\n*********************************************")
+        print("\n******* Wrong value ********")
+        print("\n*********************************************")
+    #   subprocess.call("figlet -f big 'WISE -- AWH'", shell=True) change the font to small and disine it
+        start_all()
+start_all()
