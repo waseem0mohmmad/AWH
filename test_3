@@ -40,25 +40,24 @@ def start_all(): #main menu (M)
                                     print("{}\t{}".format(i["ip"], i["mac"], ))
                                 print("------------------------------------------")
 
-                            def scan():  # network scanning
+                            def scan():
                                 result = []
                                 arp_req = ARP(pdst=ip)
                                 broadcast_eth = Ether(dst="ff:ff:ff:ff:ff:ff")
                                 broadcast_eth_arp_req_ = broadcast_eth / arp_req
                                 ans_ls = srp(broadcast_eth_arp_req_, timeout=1, verbose=False)[0]
-                                for i in range(0, len(ans_ls)):
-                                    result.append({"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc})
-                                      #################### chek if the result will save in final_result or the opposite
-                                    quit(scan())
-                                display_result(result)
-                                final_result = result
-                                
                                 if len(result) == 0:
                                     print("\n*********************************************")
                                     print("\n******* can not finde IP add ********")
                                     print("\n*********************************************")
                                     net_scan()
-                                    
+
+                                for i in range(0, len(ans_ls)):
+                                    result.append({"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc})
+                                    quit(scan()) ######## chek if the result will save in final_result or the opposite
+                                final_result = result
+                                display_result(result)
+
                             ss = ["*", "q", "Q", "m", "M"]
                             if ip not in ss:
                                 scan()
@@ -74,7 +73,7 @@ def start_all(): #main menu (M)
                                 print("\n******* Wrong value ********")
                                 print("\n*********************************************")
                                 net_scan()
-                        net_scan()     
+                        net_scan()
                     elif scan == "2": #port scanning
                         def por_scan():
                             print("\n------------------------------------------------")
@@ -166,7 +165,7 @@ def start_all(): #main menu (M)
                                 print("\n******* Wrong value ********")
                                 print("\n*********************************************")
                                 por_scan()
-                        por_scan() 
+                        por_scan()
                     elif scan =="*": #back for scanning
                         print("\n------------------------------------------------")
                         get_started()
