@@ -32,11 +32,11 @@ def start_all(): #main menu (M)
                             ip = input("enter ip add : ")
                             final_result = []
 
-                            def display_result(final_result):
+                            def display_result(result):
                                 print("----------------------------------------")
                                 print("IP\t\tMAC ADDRESS")
                                 print("-----------------------------------------")
-                                for i in final_result:
+                                for i in result:
                                     print("{}\t{}".format(i["ip"], i["mac"], ))
                                 print("------------------------------------------")
 
@@ -48,10 +48,10 @@ def start_all(): #main menu (M)
                                 ans_ls = srp(broadcast_eth_arp_req_, timeout=1, verbose=False)[0]
                                 for i in range(0, len(ans_ls)):
                                     result.append({"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc})
-                                    final_result = result  #################### chek if the result will save in final_result or the opposite
+                                      #################### chek if the result will save in final_result or the opposite
                                     quit(scan())
-                                display_result(final_result)
-                                info_store = final_result  # add f kye for in into inter face
+                                display_result(result)
+                                final_result = result
                                 
                                 if len(result) == 0:
                                     print("\n*********************************************")
