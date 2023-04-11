@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+import AWH_font_styl
+import defs
+AWH_font_styl.fontStyl()
+print("AWH giving you many option to sccane , sniffe , descover your network") #chang it another
+
+ss = ["q","Q","m","M"]
+o1 = defs.intro()
+o2 = defs.scanning()
+o3 = defs.info()
+oo = [o1.intfc,o1.num,o2.scan,o3.help,o3.about]
+oo.append(["","","","",""])
+o1.start_all()
+def MQ(i):
+    if i == "m" or i == "M":  # main menu (M)
+        o1.start_all()
+    elif i == "q" or i == "Q":  # quit (Q)
+        # print(oo)
+        # oo.append(["", "", "", "", ""])
+        # print(oo)
+        exit()
+def start():
+    for i in oo:
+        if o1.intfc != "": # main menu (M)
+            if o1.intfc =="1": # 1-get start
+                o1.get_started() # 1-scanning 2-sniffing *-back
+            elif o1.intfc == "2": # 2-help
+                o3.help()
+            elif o1.intfc == "3": # 3-about
+                o3.about()
+            elif o1.intfc == "q" or o1.intfc == "Q": # quit (qut)
+                MQ("q")
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value 1 ********")
+                print("\n*********************************************")
+                o1.start_all()
+        if o1.num != "": # (get start) 1-scanning 2-sniffing *-back
+            if o1.num == "1": # 1-scanning
+                o2.scanning() # 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
+            elif o1.num == "2": # 2-sniffing
+                defs.sniffing()
+            elif o1.num == "*" : # *-back + main menu (M) (get started)
+                o1.start_all()
+            elif o1.num in ss:
+                MQ(o1.num)
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value 2 ********")
+                print("\n*********************************************")
+                o1.get_started()
+        if o3.hlp != "": # (help) 1-How to scan the Network 2-How to sniff the Network *-Back
+            if o3.hlp == "1":  # How to scan the Network
+                print("\n------------------------------------------------")
+                print("scan")
+            elif o3.hlp == "2":  # How to sniff the Network
+                print("\n------------------------------------------------")
+                print("sniff")
+            elif o3.hlp == "*":  # *-back + main menu (M) (get started)
+                o1.start_all()
+            elif o3.hlp in ss:
+                MQ(o3.hlp)
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value 3 ********")
+                print("\n*********************************************")
+                o3.help()
+        if o3.abot != "": # 3 - about
+            if o3.abot == "*":  # *-back + main menu (M) (get started)
+                o1.start_all()
+            elif o3.abot in ss:
+                MQ(o3.abot)
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value 4 ********")
+                print("\n*********************************************")
+                o3.about()
+        if o2.scan != "": # (scanning) 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
+            if o2.scan == "1": # 2-PORT SCANNING
+                o2.net_scan()
+            elif o2.scan == "2": # 1-NETWORK SCANNING
+                print("")
+            elif o2.scan == "3": # 3-VULNERABILITY SCANNING
+                print("")
+            elif o2.scan == "*":  # *-back
+                o1.get_started()
+            elif o2.scan in ss:
+                MQ(o2.scan)
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value 5 ********")
+                print("\n*********************************************")
+                o2.scanning()
+start()
