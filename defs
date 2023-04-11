@@ -1,0 +1,90 @@
+from scapy.layers.l2 import ARP,Ether,srp
+import socket
+import subprocess
+#from AWH_int_face import start_all as aw
+num_get_start = ''
+scan_scanning = ""
+class intro: # o1
+    num = ''
+    intfc = ''
+    def start_all(self): #main menu (M)
+        print("\n------------------------------------------------")
+        print("[+] *  Back for previous page\n[+] M  For main menu\n[+] Q  For quit the tool ")
+        print("------------------------------------------------")
+        print("1-Get started\n2-Help\n3-About")  # desine it
+        intfc=input("enter number : ")
+        self.intfc=intfc
+    def get_started(self):
+        print("\n------------------------------------------------")
+        print("1-scanning\n2-sniffing\n*-back")
+        num = input("enter numer : ")
+        self.intfc = ""
+        self.num = num
+        # if self.num != '':
+        #     aw.intfc = "1"
+
+class scanning: # o2
+    scan = ''
+    my_ip = ''
+    subnet_mask = ''
+    final_result = []
+    def scanning(self):
+        print("\n------------------------------------------------")
+        print("1-NETWORK SCANNING\n2-PORT SCANNING\n3-VULNERABILITY SCANNING\n*-back")
+        scan = input("enter number : ")
+        self.scan = scan
+
+    def net_scan(self):
+        print("\n------------------------------------------------")
+        def get_my_ip(self):
+            final_result = []
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            my_ip = s.getsockname()[0]
+            subnet_mask = "255.255.255.0"
+            self.my_ip = my_ip
+            s.close()
+
+        def display_result(result):
+            print("----------------------------------------")
+            print("IP\t\t|\tMAC ADDRESS")
+            print("----------------------------------------")
+            for i in result:
+                print("{}\t\t|\t{}".format(i["ip"], i["mac"], ))
+            print("----------------------------------------")
+
+        def get_ARP(ip, timeout=1):  # arp function
+            arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
+            ans_ls = srp(arp_req, timeout=timeout, verbose=False)[0]
+            for e in ans_ls:
+                self.final_result.append({"ip": e[1].psrc, "mac": e[1].hwsrc, "HOSTNAME": None, "VENDOR_IP": None})
+            return self.final_result
+
+        get_my_ip(self)
+        get_ARP(self.my_ip)
+        display_result(self.final_result)
+        return scanning
+def sniffing():
+    print("\n------------------------------------------------")
+    print("1-all\n2-HTTP\n3-TCP\n4-UDP\n5-IP\n*-back")
+    sniff = input("enter number : ")
+
+
+
+class info: # o3
+    hlp=''
+    abot=''
+    def help(self):
+        print("\n------------------------------------------------")
+        print("1-How to scan the Network\n2-How to sniff the Network\n*-Back")
+        hlp = input("enter numer : ")
+        self.hlp = hlp
+
+    def about(self):
+        print("\n------------------------------------------------")
+        print("This tool is specialized in a number of tasks that may benefit you in SCAN , SNIFF or DISCOVER your private network or in your Penetration testing. ")
+        print("created by:\n.Ahmad Almasharqa \n.Hanin Hashaikah \n.Waseem Mohammad ")
+        abot = input("\npress * to back to main menu\n")
+        self.abot=abot
+def qut():
+    quit(qut)
