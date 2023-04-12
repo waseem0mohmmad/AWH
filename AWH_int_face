@@ -9,7 +9,6 @@ o1 = defs.intro()
 o2 = defs.scanning()
 o3 = defs.info()
 oo = [o1.intfc,o1.num,o2.scan,o3.help,o3.about]
-oo.append(["","","","",""])
 o1.start_all()
 def MQ(i):
     if i == "m" or i == "M":  # main menu (M)
@@ -34,7 +33,8 @@ def start():
                 print("\n*********************************************")
                 print("\n******* Wrong value 1 ********")
                 print("\n*********************************************")
-                o1.start_all()
+                o1.intfc = ""
+                start()
         if o1.num != "": # (get start) 1-scanning 2-sniffing *-back
             if o1.num == "1": # 1-scanning
                 o2.scanning() # 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
@@ -48,7 +48,8 @@ def start():
                 print("\n*********************************************")
                 print("\n******* Wrong value 2 ********")
                 print("\n*********************************************")
-                o1.get_started()
+                o1.intfc = "1"
+                start()
         if o3.hlp != "": # (help) 1-How to scan the Network 2-How to sniff the Network *-Back
             if o3.hlp == "1":  # How to scan the Network
                 print("\n------------------------------------------------")
@@ -57,38 +58,88 @@ def start():
                 print("\n------------------------------------------------")
                 print("sniff")
             elif o3.hlp == "*":  # *-back + main menu (M) (get started)
-                o1.start_all()
+                o3.hlp = ""
+                start()
             elif o3.hlp in ss:
                 MQ(o3.hlp)
             else:
                 print("\n*********************************************")
                 print("\n******* Wrong value 3 ********")
                 print("\n*********************************************")
-                o3.help()
+                o1.intfc = "2"
+                start()
         if o3.abot != "": # 3 - about
             if o3.abot == "*":  # *-back + main menu (M) (get started)
-                o1.start_all()
+                o3.abot = ""
+                start()
             elif o3.abot in ss:
                 MQ(o3.abot)
             else:
                 print("\n*********************************************")
                 print("\n******* Wrong value 4 ********")
                 print("\n*********************************************")
-                o3.about()
+                o1.intfc = "3"
+                start()
         if o2.scan != "": # (scanning) 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
-            if o2.scan == "1": # 2-PORT SCANNING
+            if o2.scan == "1": # 1-NETWORK SCANNING
                 o2.net_scan()
-            elif o2.scan == "2": # 1-NETWORK SCANNING
-                print("")
+            elif o2.scan == "2": # 2-PORT SCANNING
+                o2.por_scan()
             elif o2.scan == "3": # 3-VULNERABILITY SCANNING
                 print("")
             elif o2.scan == "*":  # *-back
-                o1.get_started()
+                o2.scan = ""
+                start()
             elif o2.scan in ss:
                 MQ(o2.scan)
             else:
                 print("\n*********************************************")
                 print("\n******* Wrong value 5 ********")
                 print("\n*********************************************")
-                o2.scanning()
+                o1.num = "1"
+                start()
+        if o2.por != "": # (PORT SCANNING) 1- all ports 2- chose ports range
+            if o2.por == "1": # 1- all ports
+                print("\n------------------------------------------------")
+                target_host = input("Enter the target host: ")
+                if target_host not in ss:
+                    o2.target_host = target_host
+                    o2.por_scan()  #(target_host=target_host, start_port=1, end_port=65535)
+                elif target_host in ss:
+                    MQ(target_host)
+                else:
+                    print("\n*********************************************")
+                    print("\n******* Wrong value 6 ********")
+                    print("\n*********************************************")
+                    o2.por = "1"
+                    start()
+            elif o2.por == "2": # 2- chose ports range
+                print("\n------------------------------------------------")
+                target_host = input("Enter the target host: ")
+                if target_host not in ss:
+                    start_port = int(input("Enter the start port number: "))
+                    end_port = int(input("Enter the end port number: "))
+                    o2.target_host = target_host
+                    o2.start_port = start_port
+                    o2.end_port = end_port
+                    o2.por_scan()
+                elif target_host in ss:
+                    MQ(target_host)
+                else:
+                    print("\n*********************************************")
+                    print("\n******* Wrong value 7 ********")
+                    print("\n*********************************************")
+                    o2.por = "2"
+                    start()
+            elif o2.por == "*":  # *-back
+                o2.por = ""
+                start()
+            elif o2.por in ss:
+                MQ(o2.por)
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value 8 ********")
+                print("\n*********************************************")
+                o1.num = "1"
+                start()
 start()
