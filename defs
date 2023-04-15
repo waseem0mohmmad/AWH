@@ -18,7 +18,7 @@ class intro: # o1
         print("\n------------------------------------------------")
         print("1-scanning\n2-sniffing\n*-back")
         num = input("enter numer : ")
-        self.intfc = ""
+        #self.intfc = ""
         self.num = num
 
 class scanning: # o2
@@ -32,25 +32,34 @@ class scanning: # o2
     target_host = ""
     start_port = 1
     end_port = 65535
+    scan_ans_ls = []
+    port_ans_ls = []
 
+    def get_my_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("192.168.26.2", 80))
+        my_ip = s.getsockname()[0]
+        subnet_mask = "255.255.255.0"
+        self.my_ip = my_ip
+        my_ip = '.'.join(my_ip.split('.')[:-1])  # 192.168.26
+        self.my_network = my_ip + '.0/24'
+        print("my ip : ", self.my_ip, "| my network : ", self.my_network)  # your network
+        s.close()
+
+    def get_ARP(self, ip, timeout=1):  # arp function
+        arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
+        self.scan_ans_ls = srp(arp_req,timeout=timeout, verbose=False)[0]
+        for e in self.scan_ans_ls:
+            if self.final_scan_result not in self.final_scan_result: # chek the daplicated
+                self.final_scan_result.append({"ip": e[1].psrc, "mac": e[1].hwsrc, "HOSTNAME": None, "VENDOR_IP": None})
     def scanning(self):
         print("\n------------------------------------------------")
         print("1-NETWORK SCANNING\n2-PORT SCANNING\n3-VULNERABILITY SCANNING\n*-back")
-        scan = input("enter number : ")
-        self.scan = scan
+        self.scan = input("enter number : ")
+        print(self.scan)
 
     def net_scan(self):
         print("\n------------------------------------------------")
-        def get_my_ip(self):
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect(("192.168.26.2",80))
-            my_ip = s.getsockname()[0]
-            subnet_mask = "255.255.255.0"
-            self.my_ip = my_ip
-            my_ip = '.'.join(my_ip.split('.')[:-1])#192.168.26
-            self.my_network = my_ip + '.0/24'
-            print("my ip : ",self.my_ip,"\tmy network : ",self.my_network) # your network
-            s.close()
 
         def display_scan_result(result):
             print("----------------------------------------")
@@ -59,19 +68,9 @@ class scanning: # o2
             for i in result:
                 print("{}\t|\t{}".format(i["ip"], i["mac"], ))
             print("----------------------------------------")
-
-        def get_ARP(ip, timeout=1):  # arp function
-            arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
-            ans_ls = srp(arp_req, timeout=timeout, verbose=False)[0]
-            for e in ans_ls:
-                if e not in self.final_scan_result: # chek the daplicated
-                    self.final_scan_result.append({"ip": e[1].psrc, "mac": e[1].hwsrc, "HOSTNAME": None, "VENDOR_IP": None})
-            return self.final_scan_result
-
-        get_my_ip(self)
-        get_ARP(self.my_ip)
+        self.get_my_ip()
+        self.get_ARP(self.my_ip)
         display_scan_result(self.final_scan_result)
-        return scanning
 
     def por_scan(self):
         print("\n------------------------------------------------")
@@ -83,7 +82,11 @@ class scanning: # o2
             for i in result:
                 print("{}\t|\t{}".format(i["ip"], i["mac"], ))
             print("----------------------------------------")
-        if self.final_scan_result != []:
+        if len(self.final_scan_result) == 0:
+            self.get_my_ip()
+            self.get_ARP(self.my_ip,2)
+            display_scan_result(self.final_scan_result)
+        elif len(self.final_scan_result) != 0:
             display_scan_result(self.final_scan_result)
         print("1- all ports\n2- chose ports range")
         self.por = input("enter number : ")
@@ -95,44 +98,39 @@ class scanning: # o2
                 print("{}\t|{}\t|{}".format(i["ip"], i["mac"], i["ports"]))
             print("---------------------------------------------------------")
         def port_scan(target_host, start_port, end_port):  #
-            result = []
-            arp_req = ARP(pdst=target_host)
-            broadcast_eth = Ether(dst="ff:ff:ff:ff:ff:ff")
-            broadcast_eth_arp_req_ = broadcast_eth / arp_req
-            ans_ls = srp(broadcast_eth_arp_req_, timeout=1, verbose=False)[0]
-            if len(result) != 0:
+            if len(self.scan_ans_ls) != 0: # if the connection was successful, print the open port number
                 # for i in range(0, len(ans_ls)):
                 #     result.append({"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc})
+                # final_result.append({"ip":target_host,"ma":mac_address, "ports": port})
                 for port in range(start_port, end_port + 1):
                     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  # create a socket object
                     sock.settimeout(1)  # set the timeout for the connection attempt
                     result = sock.connect_ex((target_host, port))  # attempt to connect to the target host and port
-                    self.final_port_result.append((port, result))
-                if result == 0:  # if the connection was successful, print the open port number
-                    # final_result.append({"ip":target_host,"ma":mac_address, "ports": port})
-                    self.final_port_result.append({"ip": target_host, "mac": ans_ls[port][1].hwsrc, "ports": port})
-                sock.close()
+                    self.final_port_result.append((port,result))
+                    self.final_port_result.append({"ip": target_host, "mac": self.scan_ans_ls[port][1].hwsrc, "port": port, "result": result}) #"mac": e[1].hwsrc
+                    sock.close()
+            elif len(self.scan_ans_ls) == 0:
+                exit(self.por_scan())
             display_port_result(self.final_port_result)
         port_scan(self.target_host,self.start_port,self.end_port)
+
 def sniffing():
     print("\n------------------------------------------------")
     print("1-all\n2-HTTP\n3-TCP\n4-UDP\n5-IP\n*-back")
     sniff = input("enter number : ")
 
 class info: # o3
-    hlp=''
-    abot=''
+    hlp = ''
+    abot = ''
     def help(self):
         print("\n------------------------------------------------")
         print("1-How to scan the Network\n2-How to sniff the Network\n*-Back")
-        hlp = input("enter numer : ")
-        self.hlp = hlp
+        self.hlp = input("enter numer : ")
 
     def about(self):
         print("\n------------------------------------------------")
         print("This tool is specialized in a number of tasks that may benefit you in SCAN , SNIFF or DISCOVER your private network or in your Penetration testing. ")
         print("created by:\n.Ahmad Almasharqa \n.Hanin Hashaikah \n.Waseem Mohammad ")
-        abot = input("\npress * to back to main menu\n")
-        self.abot=abot
+        self.abot = input("\npress * to back to main menu\n")
 def qut():
     quit(qut)
