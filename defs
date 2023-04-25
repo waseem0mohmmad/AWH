@@ -14,6 +14,7 @@ class intro: # o1
         print("1-Get started\n2-Help\n3-About")  # desine it
         intfc=input("enter number : ")
         self.intfc=intfc
+        print("defs")
     def get_started(self):
         print("\n------------------------------------------------")
         print("1-scanning\n2-sniffing\n*-back")
@@ -22,18 +23,24 @@ class intro: # o1
         self.num = num
 
 class scanning: # o2
-    scan = ''
-    my_ip = '' #192.168.26.131
+    scan = ""
+    my_ip = "" #192.168.26.131
     my_network = ""
-    subnet_mask = ''
+    subnet_mask = ""
     final_scan_result = []
     final_port_result = []
     por = ""
+    por1 = ""
+    por2 = ""
     target_host = ""
     start_port = 1
     end_port = 65535
     scan_ans_ls = []
     port_ans_ls = []
+    top_50=[80, 443, 22, 53, 25, 110, 143, 21, 3306, 3389, 1194, 1723, 23, 1720, 5060, 1723, 119, 123, 139, 445, 135, 3306,
+            3389, 5900, 995, 993, 1433, 1434, 587, 1521, 389, 5000, 5901, 110, 2222, 1194, 465, 3306, 21, 27017, 5666, 143,
+            10000, 27015, 5432, 1723, 563, 3306, 28015, 3389]
+
 
     def get_my_ip(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -46,12 +53,13 @@ class scanning: # o2
         print("my ip : ", self.my_ip, "| my network : ", self.my_network)  # your network
         s.close()
 
-    def get_ARP(self, ip, timeout=1):  # arp function
+    def get_ARP(self, ip, timeout=3):  # arp function
         arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
-        self.scan_ans_ls = srp(arp_req,timeout=timeout, verbose=False)[0]
+        self.scan_ans_ls = srp(arp_req, timeout=timeout, verbose=False)[0]
         for e in self.scan_ans_ls:
             if self.final_scan_result not in self.final_scan_result: # chek the daplicated
                 self.final_scan_result.append({"ip": e[1].psrc, "mac": e[1].hwsrc, "HOSTNAME": None, "VENDOR_IP": None})
+            return self.final_scan_result
     def scanning(self):
         print("\n------------------------------------------------")
         print("1-NETWORK SCANNING\n2-PORT SCANNING\n3-VULNERABILITY SCANNING\n*-back")
@@ -63,39 +71,47 @@ class scanning: # o2
 
         def display_scan_result(result):
             print("----------------------------------------")
-            print("IP\t\t|\tMAC ADDRESS")
+            print("IP\t\t|MAC ADDRESS")
             print("----------------------------------------")
             for i in result:
                 print("{}\t|\t{}".format(i["ip"], i["mac"], ))
             print("----------------------------------------")
         self.get_my_ip()
-        self.get_ARP(self.my_ip)
+        self.get_ARP(self.my_network, 2)
+        self.final_scan_result = list(set(self.final_scan_result))
         display_scan_result(self.final_scan_result)
+        print(self.final_scan_result)
+        print(self.my_ip)
+        print(self.scan_ans_ls)
 
     def por_scan(self):
         print("\n------------------------------------------------")
 
         def display_scan_result(result):
             print("----------------------------------------")
-            print("IP\t\t|\tMAC ADDRESS")
+            print("IP")
             print("----------------------------------------")
-            for i in result:
-                print("{}\t|\t{}".format(i["ip"], i["mac"], ))
+            for i ,ip in enumerate(result):
+               #print(len(i) in result,"-{}".format(i["ip"]))
+                print({i+1},'-',"{}".format(ip["ip"]))
             print("----------------------------------------")
         if len(self.final_scan_result) == 0:
             self.get_my_ip()
-            self.get_ARP(self.my_ip,2)
+            self.get_ARP(self.my_network,2)
+            self.final_scan_result = list(set(self.final_scan_result))
             display_scan_result(self.final_scan_result)
         elif len(self.final_scan_result) != 0:
             display_scan_result(self.final_scan_result)
-        print("1- all ports\n2- chose ports range")
-        self.por = input("enter number : ")
+        self.por1 = input("chose ip number : ")
+        self.por1=int(self.por1)
+        self.por2=self.final_scan_result[self.por1-1]
+        self.por = input("1- all ports\n2- chose ports range\n3- top 50 famous port\nenter number : ")
         def display_port_result(final_result):
             print("---------------------------------------------------------")
-            print("IP\t\t|MAC ADDRESS\t\t|OPEN PORTS")
+            print("IP\t\t|OPEN PORTS")
             print("---------------------------------------------------------")
             for i in final_result:
-                print("{}\t|{}\t|{}".format(i["ip"], i["mac"], i["ports"]))
+                print("{}\t|{}".format(i["ip"], i["ports"]))
             print("---------------------------------------------------------")
         def port_scan(target_host, start_port, end_port):  #
             if len(self.scan_ans_ls) != 0: # if the connection was successful, print the open port number
@@ -112,7 +128,7 @@ class scanning: # o2
             elif len(self.scan_ans_ls) == 0:
                 exit(self.por_scan())
             display_port_result(self.final_port_result)
-        port_scan(self.target_host,self.start_port,self.end_port)
+        port_scan(self.por2,self.start_port,self.end_port)
 
 def sniffing():
     print("\n------------------------------------------------")
