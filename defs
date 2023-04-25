@@ -31,7 +31,6 @@ class scanning: # o2
     final_port_result = []
     por = ""
     por1 = ""
-    por2 = ""
     target_host = ""
     start_port = 1
     end_port = 65535
@@ -104,7 +103,7 @@ class scanning: # o2
             display_scan_result(self.final_scan_result)
         self.por1 = input("chose ip number : ")
         self.por1=int(self.por1)
-        self.por2=self.final_scan_result[self.por1-1]
+        self.target_host=self.final_scan_result[self.por1-1]
         self.por = input("1- all ports\n2- chose ports range\n3- top 50 famous port\nenter number : ")
         def display_port_result(final_result):
             print("---------------------------------------------------------")
@@ -127,8 +126,10 @@ class scanning: # o2
                     sock.close()
             elif len(self.scan_ans_ls) == 0:
                 exit(self.por_scan())
+            self.final_port_result = list(set(self.final_port_result))
+            self.final_port_result = sorted(self.final_port_result)
             display_port_result(self.final_port_result)
-        port_scan(self.por2,self.start_port,self.end_port)
+        port_scan(self.target_host,self.start_port,self.end_port)
 
 def sniffing():
     print("\n------------------------------------------------")
