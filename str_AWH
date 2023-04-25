@@ -8,7 +8,7 @@ ss = ["q","Q","m","M"]
 o1 = defs.intro()
 o2 = defs.scanning()
 o3 = defs.info()
-oo = [o1.intfc,o1.num,o2.scan,o2.por,o3.help,o3.about]
+oo = [o1.intfc,o1.num,o2.scan,o2.por,o2.por1,o3.help,o3.about]
 def MQ(i):
     if i == "m" or i == "M":  # main menu (M)
         o1.start_all()
@@ -21,21 +21,20 @@ def MQ(i):
 def start():
     def po():
         o2.por_scan()
-        if o2.por != "": # (PORT SCANNING) 1- all ports 2- chose ports range
+        if o2.por != "": # (PORT SCANNING) 1- all ports 2- chose ports range 3- top 50 famous port
             if o2.por == "1": # 1- all ports
                 print("\n------------------------------------------------")
-                target_host = input("Enter the target host: ")
-                if target_host not in ss:
-                    o2.target_host = target_host
+                if o2.por1 not in ss:
+                    o2.target_host = o2.por1
                     o2.por_scan()  #(target_host=target_host, start_port=1, end_port=65535)
-                elif target_host in ss:
-                    MQ(target_host)
+                elif o2.por1 in ss:
+                    MQ(o2.por1)
                 else:
                     print("\n*********************************************")
                     print("\n******* Wrong value 6 ********")
                     print("\n*********************************************")
                     o2.por = "1"
-                    start()
+                    po()
             elif o2.por == "2": # 2- chose ports range
                 print("\n------------------------------------------------")
                 target_host = input("Enter the target host: ")
@@ -54,6 +53,8 @@ def start():
                     print("\n*********************************************")
                     o2.por = "2"
                     start()
+            elif o2.por == "3":
+                print((""))
             elif o2.por == "*":  # *-back
                 o2.por = " "
                 start()
@@ -86,8 +87,7 @@ def start():
                 print("\n*********************************************")
                 print("\n******* Wrong value 5 ********")
                 print("\n*********************************************")
-                o1.num = "1"
-                start()
+                sc()
 
     def gs():
         print("gs")
