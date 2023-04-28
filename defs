@@ -1,26 +1,24 @@
-from scapy.layers.l2 import ARP,Ether,srp
+from scapy.layers.l2 import ARP, Ether, srp
 import socket
-import subprocess
-#from AWH_int_face import start_all as aw
+import struct
 num_get_start = ''
 scan_scanning = ""
 class intro: # o1
     num = ''
     intfc = ''
+
     def start_all(self): #main menu (M)
         print("\n------------------------------------------------")
         print("[+] *  Back for previous page\n[+] M  For main menu\n[+] Q  For quit the tool ")
         print("------------------------------------------------")
         print("1-Get started\n2-Help\n3-About")  # desine it
-        intfc=input("enter number : ")
-        self.intfc=intfc
+        self.intfc = input("enter number : ")
         print("defs")
+
     def get_started(self):
         print("\n------------------------------------------------")
         print("1-scanning\n2-sniffing\n*-back")
-        num = input("enter numer : ")
-        #self.intfc = ""
-        self.num = num
+        self.num = input("enter numer : ")
 
 class scanning: # o2
     ss = ["q", "Q", "m", "M", "*"]
@@ -81,7 +79,7 @@ class scanning: # o2
             print("----------------------------------------")
         self.get_my_ip()
         self.get_ARP(self.my_network, 2)
-        self.final_scan_result = list(set(self.final_scan_result))
+        set(self.final_scan_result)
         display_scan_result(self.final_scan_result)
         print(self.final_scan_result)
         print(self.my_ip)
@@ -95,13 +93,12 @@ class scanning: # o2
             print("----------------------------------------")
             print("IP")
             print("----------------------------------------")
-            for i ,ip in enumerate(result):
-               #print(len(i) in result,"-{}".format(i["ip"]))
-                print({i+1},'-',"{}".format(ip["ip"]))
+            for i, ip in enumerate(result):
+                print(i+1, '-', "{}".format(ip["ip"]))
             print("----------------------------------------")
         if len(self.final_scan_result) == 0:
             self.get_my_ip()
-            self.get_ARP(self.my_network,2)
+            self.get_ARP(self.my_network, 2)
             self.final_scan_result = list(set(self.final_scan_result))
             display_scan_result(self.final_scan_result)
             print("des port if len")
@@ -135,10 +132,46 @@ class scanning: # o2
         self.display_port_result(self.final_port_result)
 
 
-def sniffing():
-    print("\n------------------------------------------------")
-    print("1-all\n2-HTTP\n3-TCP\n4-UDP\n5-IP\n*-back")
-    sniff = input("enter number : ")
+class snifing:
+    sniff = ''
+    def sniffing(self):
+        print("\n------------------------------------------------")
+        print("1-all\n2-HTTP\n3-TCP\n4-UDP\n5-IP\n*-back")
+        self.sniff = input("enter number : ")
+
+    def TCP(self):
+        # create a raw socket and bind it to the network interface
+        sniffer = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
+        sniffer.bind(('0.0.0.0', 0))
+
+        # enable IP header reception on the socket
+        sniffer.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+        sniffer.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024 * 1024)
+        print("\n------------------------------------------------")
+        print("[+] s  stop sniffer\n[+] f  save the result")
+        print("------------------------------------------------")
+        print("Sniffer running...")
+        try:
+            while True:
+                # receive a packet and extract the TCP payload
+                packet_data = sniffer.recvfrom(65565)[0]
+                ip_header_len = (packet_data[0] & 0x0F) * 4
+                tcp_payload = packet_data[ip_header_len + 20:]
+                print(tcp_payload.decode('utf-8'))# print the payload to the console
+                user_input = input('')# listen for user input
+                if user_input == 's':
+                    sniffer.close()# close the socket and exit the program
+                    break
+                elif user_input == 'f':# save the payload to a file
+                    file_name = input("Enter a file name to save the output: ")
+                    with open(file_name, 'a') as f:
+                        f.write(tcp_payload.decode('utf-8'))
+                        f.write('\n')
+                        print('Payload saved to file: ', file_name, '.txt')
+
+        except KeyboardInterrupt:
+            # close the socket on keyboard interrupt
+            sniffer.close()
 
 class info: # o3
     hlp = ''
