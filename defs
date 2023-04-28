@@ -1,265 +1,190 @@
-#!/usr/bin/env python3
-import AWH_font_styl
-import defs
-AWH_font_styl.fontStyl()
-print("AWH giving you many option to sccane , sniffe , descover your network") #chang it another
+from scapy.layers.l2 import ARP, Ether, srp
+import socket
+import struct
+num_get_start = ''
+scan_scanning = ""
+class intro: # o1
+    num = ''
+    intfc = ''
 
-ss = ["q","Q","m","M"]
-o1 = defs.intro()
-o2 = defs.scanning()
-o3 = defs.info()
-o4 = defs.snifing()
-oo = [o1.intfc,o1.num,o2.scan,o2.por,o2.por1,o3.help,o3.about,o4.sniff]
+    def start_all(self): #main menu (M)
+        print("\n------------------------------------------------")
+        print("[+] *  Back for previous page\n[+] M  For main menu\n[+] Q  For quit the tool ")
+        print("------------------------------------------------")
+        print("1-Get started\n2-Help\n3-About")  # desine it
+        self.intfc = input("enter number : ")
+        print("defs")
 
-def start():
-    def MQ(i):
-        if i == "m" or i == "M":  # main menu (M)
-            m()
-        elif i == "q" or i == "Q":  # quit (Q)
-            # print(oo)
-            # oo.append(["", "", "", "", ""])
-            print(oo)
-            # oo.append([" ", " ", " ", " ", " ", " ",]) # o1.intfc,o1.num,o2.scan,o2.por,o3.help,o3.about
-            exit(start)
+    def get_started(self):
+        print("\n------------------------------------------------")
+        print("1-scanning\n2-sniffing\n*-back")
+        self.num = input("enter numer : ")
 
-    def po():
-        o2.por_scan()
-        por1 = input("chose ip number : ")
+class scanning: # o2
+    ss = ["q", "Q", "m", "M", "*"]
+    scan = ""
+    my_ip = "" #192.168.26.131
+    my_network = ""
+    subnet_mask = ""
+    final_scan_result = []
+    final_port_result = []
+    por = ""
+    por1 = 0
+    target_host = "0.0.0.0"
+    start_port = 1
+    end_port = 65535
+    scan_ans_ls = []
+    port_ans_ls = []
+    top_50=[80, 443, 22, 53, 25, 110, 143, 21, 3306, 3389, 1194, 1723, 23, 1720, 5060, 1723, 119, 123, 139, 445, 135, 3306,
+            3389, 5900, 995, 993, 1433, 1434, 587, 1521, 389, 5000, 5901, 110, 2222, 1194, 465, 3306, 21, 27017, 5666, 143,
+            10000, 27015, 5432, 1723, 563, 3306, 28015, 3389]
+
+
+    def get_my_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("192.168.26.2", 80))
+        my_ip = s.getsockname()[0]
+        subnet_mask = "255.255.255.0"
+        self.my_ip = my_ip
+        my_ip = '.'.join(my_ip.split('.')[:-1])  # 192.168.26
+        self.my_network = my_ip + '.0/24'
+        print("my ip : ", self.my_ip, "| my network : ", self.my_network)  # your network
+        s.close()
+
+    def get_ARP(self, ip, timeout=2):  # arp function
+        arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
+        self.scan_ans_ls = srp(arp_req, timeout=timeout, verbose=False)[0]
+        print("arp def befor for")
+        for e in self.scan_ans_ls:
+            #if self.final_scan_result not in self.final_scan_result: # chek the daplicated
+            self.final_scan_result.append({"ip": e[1].psrc, "mac": e[1].hwsrc, "HOSTNAME": None, "VENDOR_IP": None})
+            print("arp def in for loop")
+        print(self.final_scan_result)
+        return self.final_scan_result
+    def scanning(self):
+        print("\n------------------------------------------------")
+        print("1-NETWORK SCANNING\n2-PORT SCANNING\n3-VULNERABILITY SCANNING\n*-back")
+        self.scan = input("enter number : ")
+        print(self.scan)
+
+    def net_scan(self):
+        print("\n------------------------------------------------")
+
+        def display_scan_result(result):
+            print("----------------------------------------")
+            print("IP\t\t|MAC ADDRESS")
+            print("----------------------------------------")
+            for i in result:
+                print("{}\t|\t{}".format(i["ip"], i["mac"], ))
+            print("----------------------------------------")
+        self.get_my_ip()
+        self.get_ARP(self.my_network, 2)
+        #set(self.final_scan_result)
+        display_scan_result(self.final_scan_result)
+        print(self.final_scan_result)
+        print(self.my_ip)
+        print(self.scan_ans_ls)
+
+    def por_scan(self):
+        print("\n------------------------------------------------")
+
+
+        def display_scan_result(result):
+            print("----------------------------------------")
+            print("IP")
+            print("----------------------------------------")
+            for i, ip in enumerate(result):
+                print(i+1, '-', "{}".format(ip["ip"]))
+            print("----------------------------------------")
+        if len(self.final_scan_result) == 0:
+            self.get_my_ip()
+            self.get_ARP(self.my_network, 2)
+            #self.final_scan_result = list(set(self.final_scan_result))
+            display_scan_result(self.final_scan_result)
+            print("des port if len")
+        elif len(self.final_scan_result) != 0:
+            display_scan_result(self.final_scan_result)
+    def display_port_result(self,final_result):
+            print("---------------------------------------------------------")
+            print("IP\t\t|OPEN PORTS")
+            print("---------------------------------------------------------")
+            for i in final_result:
+                print("{}\t|{}".format(i["ip"], i["ports"]))
+            print("---------------------------------------------------------")
+
+    def port_scan(self,target_host, start_port, end_port):  #
+        if len(self.scan_ans_ls) != 0:  # if the connection was successful, print the open port number
+            # for i in range(0, len(ans_ls)):
+            #     result.append({"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc})
+            # final_result.append({"ip":target_host,"ma":mac_address, "ports": port})
+            for port in range(start_port, end_port + 1):
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create a socket object
+                sock.settimeout(1)  # set the timeout for the connection attempt
+                result = sock.connect_ex((target_host, port))  # attempt to connect to the target host and port
+                self.final_port_result.append((port, result))
+                self.final_port_result.append({"ip": target_host, "mac": self.scan_ans_ls[port][1].hwsrc, "port": port,
+                                               "result": result})  # "mac": e[1].hwsrc
+                sock.close()
+        elif len(self.scan_ans_ls) == 0:
+            exit(self.por_scan())
+        self.final_port_result = list(set(self.final_port_result))
+        self.final_port_result = sorted(self.final_port_result)
+        self.display_port_result(self.final_port_result)
+
+
+class snifing:
+    sniff = ''
+    def sniffing(self):
+        print("\n------------------------------------------------")
+        print("1-all\n2-HTTP\n3-TCP\n4-UDP\n5-IP\n*-back")
+        self.sniff = input("enter number : ")
+
+    def TCP(self):
+        # create a raw socket and bind it to the network interface
+        sniffer = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
+        sniffer.bind(('0.0.0.0', 0))
+
+        # enable IP header reception on the socket
+        sniffer.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
+        sniffer.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024 * 1024)
+        print("\n------------------------------------------------")
+        print("[+] s  stop sniffer\n[+] f  save the result")
+        print("------------------------------------------------")
+        print("Sniffer running...")
         try:
-            por1 = int(por1)
-            o2.por1 = por1
-            print(por1,type(por1))
-        except:
-            pass
-        if isinstance(por1, int):
-            if int(por1) > len(o2.final_scan_result):
-                print("\n*********************************************")
-                print("\n******* Wrong value po 0 ********")
-                print("\n*********************************************")
-                po()
-            else:
-                o2.target_host = o2.final_scan_result[o2.por1 - 1]
-        elif isinstance(por1, str):
-            if por1 in ss:
-                o1.intfc = ""
-                o1.num = ""
-                o2.scan = ""
-                MQ(por1)
-            elif por1 not in ss and por1 != "*":
-                print("\n*********************************************")
-                print("\n******* Wrong value po 1 ********")
-                print("\n*********************************************")
-                print(type(por1))
-                por1 = ""
-                po()
-            elif por1 == "*":
-                sc()
-        o2.por = input("1- all ports\n2- chose port number\n3- chose ports range\n4- top 50 famous port\nenter number : ")
-        if o2.por != "":  # (PORT SCANNING) chose ip number : --> 1- all ports 2- chose ports range 3- top 50 famous port
-            if o2.por == "1":  # 1- all ports
-                print("\n------------------------------------------------")
-                o2.port_scan(o2.target_host,o2.start_port,o2.end_port)
-            elif o2.por =="2":
-                port = input("enter port number : ")
-                print("\n------------------------------------------------")
-                try:
-                    port = int(port)
-                    print(port, type(port))
-                except:
-                    pass
-                if isinstance(port, int):
-                    if 0 >= port >= 65535:
-                        o2.port_scan(o2.target_host, port, port)
-                    else:
-                        print("\n*********************************************")
-                        print("\n******* Wrong value po 2 ********")
-                        print("\n*********************************************")
-                elif isinstance(port, str):
-                    if port in ss:
-                        MQ(port)
-                    elif port == "*":
-                        po()
-                    else:
-                        print("\n*********************************************")
-                        print("\n******* Wrong value po 3 ********")
-                        print("\n*********************************************")
-                
-            elif o2.por == "3":  # 2- chose ports range
-                print("\n------------------------------------------------")
-                start_port = input("Enter the start port number: ")
-                try:
-                    start_port = int(start_port)
-                    o2.start_port = start_port
-                    print(start_port, type(start_port))
-                except:
-                    pass
-                if isinstance(start_port, str):
-                    if start_port in ss:
-                        MQ(start_port)
-                    elif start_port == "*":
-                        po()
-                    else:
-                        print("\n*********************************************")
-                        print("\n******* Wrong value po 4 ********")
-                        print("\n*********************************************")
-                        po()
-                elif isinstance(start_port, int):
-                    if not(0 >= int(start_port) >= 65535):
-                        print("\n*********************************************")
-                        print("\n******* Wrong value po 5 ********")
-                        print("\n*********************************************")
-                        po()
-                end_port = input("Enter the end port number: ")
-                if isinstance(end_port, str):
-                    try:
-                        end_port = int(end_port)
-                        o2.end_port = end_port
-                        print(end_port, type(end_port))
-                    except:
-                        pass
-                    if end_port in ss:
-                        MQ(start_port)
-                    elif end_port == "*":
-                        po()
-                    else:
-                        print("\n*********************************************")
-                        print("\n******* Wrong value po 6 ********")
-                        print("\n*********************************************")
-                        po()
-                elif isinstance(end_port, int):
-                    if not (0 >= int(start_port) >= 65535):
-                        print("\n*********************************************")
-                        print("\n******* Wrong value po 7 ********")
-                        print("\n*********************************************")
-                        po()
-                o2.port_scan(o2.target_host, o2.start_port, o2.end_port)
-            elif o2.por == "4":  # 3- top 50 famous port
-                print("\n------------------------------------------------")
-                for i in o2.top_50:
-                    o2.port_scan(o2.target_host, i, i)
-            elif o2.por == "*":  # *-back
-                o2.por = " "
-                sc()
-            elif o2.por in ss:
-                MQ(o2.por)
-            else:
-                print("\n*********************************************")
-                print("\n******* Wrong value po 8 ********")
-                print("\n*********************************************")
-                o1.num = "1"
-                po()
+            while True:
+                # receive a packet and extract the TCP payload
+                packet_data = sniffer.recvfrom(65565)[0]
+                ip_header_len = (packet_data[0] & 0x0F) * 4
+                tcp_payload = packet_data[ip_header_len + 20:]
+                print(tcp_payload.decode('utf-8'))# print the payload to the console
+                user_input = input('')# listen for user input
+                if user_input == 's':
+                    sniffer.close()# close the socket and exit the program
+                    break
+                elif user_input == 'f':# save the payload to a file
+                    file_name = input("Enter a file name to save the output: ")
+                    with open(file_name, 'a') as f:
+                        f.write(tcp_payload.decode('utf-8'))
+                        f.write('\n')
+                        print('Payload saved to file: ', file_name, '.txt')
 
-    def sc():
-        o2.scanning()
-        if o2.scan != "": # (scanning) 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
-            if o2.scan == "1": # 1-NETWORK SCANNING
-                #o2.scan = ""
-                o2.net_scan()
-                sc()
-            elif o2.scan == "2": # 2-PORT SCANNING
-                po()
-            elif o2.scan == "3": # 3-VULNERABILITY SCANNING
-                print("")
-            elif o2.scan == "*":  # *-back
-                o2.scan = ""
-                gs()
-            elif o2.scan in ss:
-                MQ(o2.scan)
-            else:
-                print("\n*********************************************")
-                print("\n******* Wrong value 5 ********")
-                print("\n*********************************************")
-                sc()
+        except KeyboardInterrupt:
+            # close the socket on keyboard interrupt
+            sniffer.close()
 
-    def sf():
-        o4.sniffing()
-        if o4.sniff != "": #1-all 2-HTTP 3-TCP 4-UDP 5-IP *-back
-            if o4.sniff == "1":
-                print("")
-            elif o4.sniff == "2":
-                print("")
-            elif o4.sniff == "3":
-                o4.TCP()
-            elif o4.sniff == "4":
-                print("")
-            elif o4.sniff == "5":
-                print("")
-            elif o4.sniff == "*":
-                gs()
-            elif o4.sniff in ss:
-                MQ(o4.sniff)
-            else:
-                print("\n*********************************************")
-                print("\n******* Wrong value 2 ********")
-                print("\n*********************************************")
-                sf()
+class info: # o3
+    hlp = ''
+    abot = ''
+    def help(self):
+        print("\n------------------------------------------------")
+        print("1-How to scan the Network\n2-How to sniff the Network\n*-Back")
+        self.hlp = input("enter numer : ")
 
-    def gs():
-        print("gs")
-        o1.get_started()
-        if o1.num != "": # (get start) 1-scanning 2-sniffing *-back
-            if o1.num == "1": # 1-scanning
-                sc() # 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
-            elif o1.num == "2": # 2-sniffing
-                sf()
-            elif o1.num == "*" : # *-back + main menu (M) (get started)
-                m()
-            elif o1.num in ss:
-                MQ(o1.num)
-            else:
-                print("\n*********************************************")
-                print("\n******* Wrong value 2 ********")
-                print("\n*********************************************")
-                gs()
-    def h():
-        o3.help()
-        if o3.hlp != "": # (help) 1-How to scan the Network 2-How to sniff the Network *-Back
-            if o3.hlp == "1":  # How to scan the Network
-                print("\n------------------------------------------------")
-                print("scan")
-            elif o3.hlp == "2":  # How to sniff the Network
-                print("\n------------------------------------------------")
-                print("sniff")
-            elif o3.hlp == "*":  # *-back + main menu (M) (get started)
-                o3.hlp = "" # o1.intfc,o1.num,o2.scan,o2.por,o3.help,o3.about
-                o1.intfc = ""
-                m()
-            elif o3.hlp in ss:
-                MQ(o3.hlp)
-            else:
-                print("\n*********************************************")
-                print("\n******* Wrong value 3 ********")
-                print("\n*********************************************")
-                h()
-    def ab():
-        o3.about()
-        if o3.abot != "": # 3 - about
-            if o3.abot == "*":  # *-back + main menu (M) (get started)
-                o3.abot = ""
-                m()
-            elif o3.abot in ss:
-                MQ(o3.abot)
-            else:
-                print("\n*********************************************")
-                print("\n******* Wrong value 4 ********")
-                print("\n*********************************************")
-                ab()
-    def m():
-        o1.start_all()
-        if o1.intfc != "": # main menu (M)
-            if o1.intfc =="1": # 1-get start
-                gs() # 1-scanning 2-sniffing *-back
-            elif o1.intfc == "2": # 2-help
-                h()
-            elif o1.intfc == "3": # 3-about
-                ab()
-            elif o1.intfc == "q" or o1.intfc == "Q": # quit (qut)
-                MQ("q")
-            else:
-                print("\n*********************************************")
-                print("\n******* Wrong value 1 ********")
-                print("\n*********************************************")
-                o1.intfc = ""
-                start()
-    m()
-start()
+    def about(self):
+        print("\n------------------------------------------------")
+        print("This tool is specialized in a number of tasks that may benefit you in SCAN , SNIFF or DISCOVER your private network or in your Penetration testing. ")
+        print("created by:\n.Ahmad Almasharqa \n.Hanin Hashaikah \n.Waseem Mohammad ")
+        self.abot = input("\npress * to back to main menu\n")
+def qut():
+    quit(qut)
