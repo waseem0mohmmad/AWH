@@ -13,7 +13,6 @@ class intro: # o1
         print("------------------------------------------------")
         print("1-Get started\n2-Help\n3-About")  # desine it
         self.intfc = input("enter number : ")
-        print("defs")
 
     def get_started(self):
         print("\n------------------------------------------------")
@@ -54,18 +53,14 @@ class scanning: # o2
     def get_ARP(self, ip, timeout=2):  # arp function
         arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
         self.scan_ans_ls = srp(arp_req, timeout=timeout, verbose=False)[0]
-        print("arp def befor for")
         for e in self.scan_ans_ls:
             #if self.final_scan_result not in self.final_scan_result: # chek the daplicated
             self.final_scan_result.append({"ip": e[1].psrc, "mac": e[1].hwsrc, "HOSTNAME": None, "VENDOR_IP": None})
-            print("arp def in for loop")
-        print(self.final_scan_result)
         return self.final_scan_result
     def scanning(self):
         print("\n------------------------------------------------")
         print("1-NETWORK SCANNING\n2-PORT SCANNING\n3-VULNERABILITY SCANNING\n*-back")
         self.scan = input("enter number : ")
-        print(self.scan)
 
     def net_scan(self):
         print("\n------------------------------------------------")
@@ -81,9 +76,6 @@ class scanning: # o2
         self.get_ARP(self.my_network, 2)
         #set(self.final_scan_result)
         display_scan_result(self.final_scan_result)
-        print(self.final_scan_result)
-        print(self.my_ip)
-        print(self.scan_ans_ls)
 
     def por_scan(self):
         print("\n------------------------------------------------")
@@ -101,7 +93,6 @@ class scanning: # o2
             self.get_ARP(self.my_network, 2)
             #self.final_scan_result = list(set(self.final_scan_result))
             display_scan_result(self.final_scan_result)
-            print("des port if len")
         elif len(self.final_scan_result) != 0:
             display_scan_result(self.final_scan_result)
     def display_port_result(self,final_result):
@@ -120,6 +111,8 @@ class scanning: # o2
             for port in range(start_port, end_port + 1):
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create a socket object
                 sock.settimeout(1)  # set the timeout for the connection attempt
+                print(target_host)
+                print(port)
                 result = sock.connect_ex((target_host, port))  # attempt to connect to the target host and port
                 self.final_port_result.append((port, result))
                 self.final_port_result.append({"ip": target_host, "mac": self.scan_ans_ls[port][1].hwsrc, "port": port,
