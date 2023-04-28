@@ -8,7 +8,8 @@ ss = ["q","Q","m","M"]
 o1 = defs.intro()
 o2 = defs.scanning()
 o3 = defs.info()
-oo = [o1.intfc,o1.num,o2.scan,o2.por,o2.por1,o3.help,o3.about]
+o4 = defs.snifing()
+oo = [o1.intfc,o1.num,o2.scan,o2.por,o2.por1,o3.help,o3.about,o4.sniff]
 
 def start():
     def MQ(i):
@@ -53,14 +54,45 @@ def start():
                 po()
             elif por1 == "*":
                 sc()
-        o2.por = input("1- all ports\n2- chose ports range\n3- top 50 famous port\nenter number : ")
+        o2.por = input("1- all ports\n2- chose port number\n3- chose ports range\n4- top 50 famous port\nenter number : ")
         if o2.por != "":  # (PORT SCANNING) chose ip number : --> 1- all ports 2- chose ports range 3- top 50 famous port
             if o2.por == "1":  # 1- all ports
                 print("\n------------------------------------------------")
                 o2.port_scan(o2.target_host,o2.start_port,o2.end_port)
-            elif o2.por == "2":  # 2- chose ports range
+            elif o2.por =="2":
+                port = input("enter port number : ")
+                print("\n------------------------------------------------")
+                try:
+                    port = int(port)
+                    print(port, type(port))
+                except:
+                    pass
+                if isinstance(port, int):
+                    if 0 >= port >= 65535:
+                        o2.port_scan(o2.target_host, port, port)
+                    else:
+                        print("\n*********************************************")
+                        print("\n******* Wrong value po 1 ********")
+                        print("\n*********************************************")
+                elif isinstance(port, str):
+                    if port in ss:
+                        MQ(port)
+                    elif port == "*":
+                        po()
+                    else:
+                        print("\n*********************************************")
+                        print("\n******* Wrong value po 1 ********")
+                        print("\n*********************************************")
+                
+            elif o2.por == "3":  # 2- chose ports range
                 print("\n------------------------------------------------")
                 start_port = input("Enter the start port number: ")
+                try:
+                    start_port = int(start_port)
+                    o2.start_port = start_port
+                    print(start_port, type(start_port))
+                except:
+                    pass
                 if isinstance(start_port, str):
                     if start_port in ss:
                         MQ(start_port)
@@ -77,12 +109,17 @@ def start():
                         print("\n******* Wrong value po 3 ********")
                         print("\n*********************************************")
                         po()
-                o2.start_port = int(start_port)
                 end_port = input("Enter the end port number: ")
                 if isinstance(end_port, str):
-                    if start_port in ss:
+                    try:
+                        end_port = int(end_port)
+                        o2.end_port = end_port
+                        print(end_port, type(end_port))
+                    except:
+                        pass
+                    if end_port in ss:
                         MQ(start_port)
-                    elif start_port == "*":
+                    elif end_port == "*":
                         po()
                     else:
                         print("\n*********************************************")
@@ -95,10 +132,11 @@ def start():
                         print("\n******* Wrong value po 5 ********")
                         print("\n*********************************************")
                         po()
-                o2.end_port = int(end_port)
                 o2.port_scan(o2.target_host, o2.start_port, o2.end_port)
-            elif o2.por == "3":  # 3- top 50 famous port
+            elif o2.por == "4":  # 3- top 50 famous port
                 print("\n------------------------------------------------")
+                for i in o2.top_50:
+                    o2.port_scan(o2.target_host, i, i)
             elif o2.por == "*":  # *-back
                 o2.por = " "
                 sc()
@@ -133,6 +171,29 @@ def start():
                 print("\n*********************************************")
                 sc()
 
+    def sf():
+        o4.sniffing()
+        if o4.sniff != "": #1-all 2-HTTP 3-TCP 4-UDP 5-IP *-back
+            if o4.sniff == "1":
+                print("")
+            elif o4.sniff == "2":
+                print("")
+            elif o4.sniff == "3":
+                o4.TCP()
+            elif o4.sniff == "4":
+                print("")
+            elif o4.sniff == "5":
+                print("")
+            elif o4.sniff == "*":
+                gs()
+            elif o4.sniff in ss:
+                MQ(o4.sniff)
+            else:
+                print("\n*********************************************")
+                print("\n******* Wrong value 2 ********")
+                print("\n*********************************************")
+                sf()
+
     def gs():
         print("gs")
         o1.get_started()
@@ -140,7 +201,7 @@ def start():
             if o1.num == "1": # 1-scanning
                 sc() # 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
             elif o1.num == "2": # 2-sniffing
-                defs.sniffing()
+                sf()
             elif o1.num == "*" : # *-back + main menu (M) (get started)
                 m()
             elif o1.num in ss:
