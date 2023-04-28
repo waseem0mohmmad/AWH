@@ -72,7 +72,7 @@ def start():
                         o2.port_scan(o2.target_host, port, port)
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 1 ********")
+                        print("\n******* Wrong value po 2 ********")
                         print("\n*********************************************")
                 elif isinstance(port, str):
                     if port in ss:
@@ -81,9 +81,9 @@ def start():
                         po()
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 1 ********")
+                        print("\n******* Wrong value po 3 ********")
                         print("\n*********************************************")
-                
+
             elif o2.por == "3":  # 2- chose ports range
                 print("\n------------------------------------------------")
                 start_port = input("Enter the start port number: ")
@@ -100,13 +100,13 @@ def start():
                         po()
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 2 ********")
+                        print("\n******* Wrong value po 4 ********")
                         print("\n*********************************************")
                         po()
                 elif isinstance(start_port, int):
                     if not(0 >= int(start_port) >= 65535):
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 3 ********")
+                        print("\n******* Wrong value po 5 ********")
                         print("\n*********************************************")
                         po()
                 end_port = input("Enter the end port number: ")
@@ -123,13 +123,13 @@ def start():
                         po()
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 4 ********")
+                        print("\n******* Wrong value po 6 ********")
                         print("\n*********************************************")
                         po()
                 elif isinstance(end_port, int):
                     if not (0 >= int(start_port) >= 65535):
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 5 ********")
+                        print("\n******* Wrong value po 7 ********")
                         print("\n*********************************************")
                         po()
                 o2.port_scan(o2.target_host, o2.start_port, o2.end_port)
@@ -144,7 +144,7 @@ def start():
                 MQ(o2.por)
             else:
                 print("\n*********************************************")
-                print("\n******* Wrong value po 6 ********")
+                print("\n******* Wrong value po 8 ********")
                 print("\n*********************************************")
                 o1.num = "1"
                 po()
