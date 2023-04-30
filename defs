@@ -96,32 +96,44 @@ class scanning: # o2
         elif len(self.final_scan_result) != 0:
             display_scan_result(self.final_scan_result)
     def display_port_result(self,final_result):
-            print("---------------------------------------------------------")
-            print("IP\t\t|OPEN PORTS")
-            print("---------------------------------------------------------")
-            for i in final_result:
-                print("{}\t|{}".format(i["ip"], i["ports"]))
-            print("---------------------------------------------------------")
+        print("---------------------------------------------------------")
+        print("IP\t\t| PORT \t| STATUS")
+        print("----------------|-------|-----------------------------")
+        for i in final_result:
+            status = "OPEN" if i["result"] == 0 else "CLOSED/Filtered"
+            status_color = "\033[92m" if i["result"] == 0 else "\033[91m"
+            print("{}\t| {}\t| {}{}\033[0m".format(i["ip"], i["port"], status_color, status))
+        print("---------------------------------------------------------")
 
-    def port_scan(self,target_host, start_port, end_port):  #
-        if len(self.scan_ans_ls) != 0:  # if the connection was successful, print the open port number
-            # for i in range(0, len(ans_ls)):
-            #     result.append({"ip": ans_ls[i][1].psrc, "mac": ans_ls[i][1].hwsrc})
-            # final_result.append({"ip":target_host,"ma":mac_address, "ports": port})
+    def display_port_result_range(self,final_result):
+        print("---------------------------------------------------------")
+        print("IP\t\t|OPEN PORTS")
+        print("----------------|----------------------------------------")
+        for i in final_result:
+            print("\033[95m{}\t\033[0m|\033[94m{}\033[0m".format(i["ip"], i["ports"]))
+        print("---------------------------------------------------------")
+    def port_scan_range(self,target_host, start_port, end_port):  #
+        if len(self.scan_ans_ls) != 0:
             for port in range(start_port, end_port + 1):
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # create a socket object
-                sock.settimeout(1)  # set the timeout for the connection attempt
-                print(target_host)
-                print(port)
-                result = sock.connect_ex((target_host, port))  # attempt to connect to the target host and port
-                self.final_port_result.append((port, result))
-                self.final_port_result.append({"ip": target_host, "mac": self.scan_ans_ls[port][1].hwsrc, "port": port,
-                                               "result": result})  # "mac": e[1].hwsrc
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(1)
+                result = sock.connect_ex((target_host, port))
+                if result == 0:  # check if the connection was successful (i.e., the port is open)
+                    self.final_port_result.append({"ip": target_host, "port": port, "result": result})
                 sock.close()
-        elif len(self.scan_ans_ls) == 0:
+        else:
             exit(self.por_scan())
-        self.final_port_result = list(set(self.final_port_result))
-        self.final_port_result = sorted(self.final_port_result)
+        self.final_port_result = sorted(self.final_port_result,key=lambda x: x['port'])  # sort the results by port number
+        self.display_port_result_range(self.final_port_result)
+
+    def port_scan(self, target_host, port):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)
+        result = sock.connect_ex((target_host, port))
+        if result == 0:  # check if the connection was successful (i.e., the port is open)
+            self.final_port_result.append({"ip": target_host, "port": port, "result": result})
+        sock.close()
+
         self.display_port_result(self.final_port_result)
 
 
