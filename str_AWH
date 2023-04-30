@@ -16,9 +16,45 @@ def start():
         if i == "m" or i == "M":  # main menu (M)
             m()
         elif i == "q" or i == "Q":  # quit (Q)
-            exit(start)
+            exit()
 
     def po():
+        def port_chek():
+            port_list = []
+            print("-----------------------------------------------")
+            print("[+] r start scanning")
+            print("-----------------------------------------------")
+            while True:
+                port = input("enter port number : ")
+                try:
+                    port = int(port)
+                    print(port, type(port))
+                except:
+                    pass
+                if isinstance(port, int):
+                    port_list.append(port)
+                    print(port_list)
+                elif isinstance(port, str):
+                    if port == "r":  # chek if port list is int oe str
+                        break
+                    elif port in ss:
+                        MQ(port)
+                    elif port == "*":
+                        po()
+                    else:
+                        print("\n*********************************************")
+                        print("\n******* Wrong value po 3 ********")
+                        print("\n*********************************************")
+            if isinstance(port, int):
+                if 0 <= port <= 65535:
+                    for i in port_list:
+                        o2.port_scan(o2.target_host, i)
+                        po()
+                else:
+                    print("\n*********************************************")
+                    print("\n******* Wrong value po 2 ********")
+                    print("\n*********************************************")
+                    po()
         o2.por_scan()
         por1 = input("chose ip number : ")
         try:
@@ -27,16 +63,16 @@ def start():
         except:
             pass
         if isinstance(por1, int):
-            if por1 >= len(o2.final_scan_result) >= por1:
+            if por1 <= 0 or por1 > len(o2.final_scan_result):
                 print("\n*********************************************")
-                print("\n******* Wrong value po 0 ********")
+                print("\n******* Wrong value for po 0 ********")
                 print("\n*********************************************")
                 po()
             else:
-                ip = o2.final_scan_result[o2.por1 - 1]
+                ip = o2.final_scan_result[por1 - 1]
                 o2.target_host = ip['ip']
                 print("-----------------------------------------------")
-                print('\033[91m"target host ip is : "',o2.target_host)
+                print("\033[91mTarget host IP is: {}\033[0m".format(o2.target_host))
                 print("-----------------------------------------------")
         elif isinstance(por1, str):
             if por1 in ss:
@@ -53,9 +89,9 @@ def start():
                 po()
             elif por1 == "*":
                 sc()
-        o2.por = input("\n1-top 50 famous port\n2- chose port number\n3- chose ports range\n4-all ports top 50 famous port\nenter number : ")
-        if o2.por != "":  # (PORT SCANNING) chose ip number : --> 1- all ports 2- chose port number 3- chose ports range 3- top 50 famous port
-            if o2.por == "1":  # 1- all ports
+        o2.por = input("\n1- top 50 famous port\n2- chose port number\n3- chose ports range\n4- all ports\nenter number : ")
+        if o2.por != "":  # (PORT SCANNING) chose ip number : --> 1- top 50 famous port 2- chose port number 3- chose ports range 4- all ports
+            if o2.por == "1":  # 1- top 50 famous port
                 print("Those are the Most common Protocols")
                 ports = [[22, "SSH"],[23, "Telnet"],[25, "SMTP"],[53, "DNS"],[80, "HTTP"],[110, "POP3"],[119, "NNTP"],[123, "NTP"],
                          [135, "MSRPC"],[139, "NetBIOS"],[143, "IMAP"],[443, "HTTPS"],[445, "SMB"],[465, "SMTPS"],[5060, "SIP"],
@@ -65,49 +101,30 @@ def start():
                          [27017, "MongoDB"],[28015, "Steam"],[3306, "MySQL"],[3389, "RDP"], [10000, "Webmin"]]
                 print("\033[31m Write down the Port's number \033[0m" + 'number')
                 conter = 0
-                for port in ports:
-                        print(f"[{port[0]}]: {port[1]}")
-                        conter += 1
-                        if conter % 5 == 0:
-                            print()
-                for i in o2.top_50:
-                    o2.port_scan(o2.target_host, i, i)
-            elif o2.por =="2":#2- chose port number
-                port_list = []
-                print("[+] ")
-                while True:
-                    port = input("enter port number : ")
-                    try:
-                        port = int(port)
-                        print(port, type(port))
-                    except:
-                        pass
-                    if isinstance(port, int):
-                        port_list.append(port)
-                        print(port)
-                    elif isinstance(port, str):
-                        if port == "r":
-                            break
-                        elif port in ss:
-                            MQ(port)
-                        elif port == "*":
-                            po()
-                        else:
-                            print("\n*********************************************")
-                            print("\n******* Wrong value po 3 ********")
-                            print("\n*********************************************")
-                if isinstance(port, int):
-                    # if port >= 65535 and port <= 0:
-                    #     print("port number is : ",port)
-                    #     o2.port_scan(o2.target_host, port, port)
-                    # else:
-                    #     print("\n*********************************************")
-                    #     print("\n******* Wrong value po 2 ********")
-                    #     print("\n*********************************************")
-                    o2.port_scan(o2.target_host, port, port)
+                for i, port in enumerate(ports):
+                    print(f"[{port[0]}]: {port[1]}", end=' ')
+                    conter += 1
+                    if conter % 5 == 0:
+                        print()
+                enter = input("1- all\n2- chose ports\nenter number: ")
+                if enter == "1":
+                    for i in o2.top_50:
+                        o2.port_scan(o2.target_host, i,)
+                        po()
+                elif enter == "2":
+                    port_chek()
+                elif enter in ss:
+                    MQ(enter)
+                elif enter == "*":
                     po()
-
-            elif o2.por == "3":  # 2- chose ports range
+                else:
+                    print("\n*********************************************")
+                    print("\n******* Wrong value po 2 ********")
+                    print("\n*********************************************")
+                    po()
+            elif o2.por =="2":#2- chose port number
+                port_chek()
+            elif o2.por == "3":  # 3- chose ports range
                 print("\n------------------------------------------------")
                 start_port = input("Enter the start port number: ")
                 try:
@@ -116,7 +133,7 @@ def start():
                 except:
                     pass
                 if isinstance(start_port, int):
-                    if not(0 >= start_port and start_port >= 65535):
+                    if 0 < start_port or start_port > 65535:
                         print("\n*********************************************")
                         print("\n******* Wrong value po 4 ********")
                         print("\n*********************************************")
@@ -132,18 +149,18 @@ def start():
                         print("\n*********************************************")
                         po()
                 end_port = input("Enter the end port number: ")
+                try:
+                    end_port = int(end_port)
+                    o2.end_port = end_port
+                except:
+                    pass
                 if isinstance(end_port, int):
-                    if not (0 >= int(start_port) >= 65535):
+                    if start_port < end_port or end_port > 65535:
                         print("\n*********************************************")
                         print("\n******* Wrong value po 6 ********")
                         print("\n*********************************************")
                         po()
                 elif isinstance(end_port, str):
-                    try:
-                        end_port = int(end_port)
-                        o2.end_port = end_port
-                    except:
-                        pass
                     if end_port in ss:
                         MQ(start_port)
                     elif end_port == "*":
@@ -153,11 +170,10 @@ def start():
                         print("\n******* Wrong value po 7 ********")
                         print("\n*********************************************")
                         po()
-
-                o2.port_scan(o2.target_host, o2.start_port, o2.end_port)
+                o2.port_scan_range(o2.target_host, o2.start_port, o2.end_port)
             elif o2.por == "4":  # 4- all ports
                 print("\n------------------------------------------------")
-
+                o2.port_scan_range(o2.target_host,o2.start_port,o2.end_port)
             elif o2.por == "*":  # *-back
                 o2.por = " "
                 sc()
