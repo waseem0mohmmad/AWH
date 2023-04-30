@@ -102,7 +102,7 @@ def start():
                 print("\033[31m Write down the Port's number \033[0m" + 'number')
                 conter = 0
                 for i, port in enumerate(ports):
-                    print(f"[{port[0]}]: {port[1]}", end=' ')
+                    print(f"{i+1}- [{port[0]}]: {port[1]}", end=' ')
                     conter += 1
                     if conter % 5 == 0:
                         print()
