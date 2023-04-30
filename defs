@@ -1,5 +1,7 @@
 from scapy.layers.l2 import ARP, Ether, srp
 import socket
+import time
+import select
 import struct
 num_get_start = ''
 scan_scanning = ""
@@ -54,8 +56,8 @@ class scanning: # o2
         arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
         self.scan_ans_ls = srp(arp_req, timeout=timeout, verbose=False)[0]
         for e in self.scan_ans_ls:
-            #if self.final_scan_result not in self.final_scan_result: # chek the daplicated
             self.final_scan_result.append({"ip": e[1].psrc, "mac": e[1].hwsrc, "HOSTNAME": None, "VENDOR_IP": None})
+            self.final_scan_result = list(set(self.final_scan_result))
         return self.final_scan_result
     def scanning(self):
         print("\n------------------------------------------------")
@@ -120,10 +122,12 @@ class scanning: # o2
                 result = sock.connect_ex((target_host, port))
                 if result == 0:  # check if the connection was successful (i.e., the port is open)
                     self.final_port_result.append({"ip": target_host, "port": port, "result": result})
+                    self.final_port_result = list(set(self.final_port_result))
                 sock.close()
         else:
             exit(self.por_scan())
         self.final_port_result = sorted(self.final_port_result,key=lambda x: x['port'])  # sort the results by port number
+        self.final_port_result = list(set(self.final_port_result))
         self.display_port_result_range(self.final_port_result)
 
     def port_scan(self, target_host, port):
@@ -132,6 +136,7 @@ class scanning: # o2
         result = sock.connect_ex((target_host, port))
         if result == 0:  # check if the connection was successful (i.e., the port is open)
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
+            self.final_port_result = list(set(self.final_port_result))
         sock.close()
 
         self.display_port_result(self.final_port_result)
@@ -157,25 +162,32 @@ class snifing:
         print("------------------------------------------------")
         print("Sniffer running...")
         try:
+            last_activity_time = time.time()
             while True:
-                # receive a packet and extract the TCP payload
-                packet_data = sniffer.recvfrom(65565)[0]
-                ip_header_len = (packet_data[0] & 0x0F) * 4
-                tcp_payload = packet_data[ip_header_len + 20:]
-                print(tcp_payload.decode('utf-8'))# print the payload to the console
-                user_input = input('')# listen for user input
-                if user_input == 's':
-                    sniffer.close()# close the socket and exit the program
-                    break
-                elif user_input == 'f':# save the payload to a file
-                    file_name = input("Enter a file name to save the output: ")
-                    with open(file_name, 'a') as f:
-                        f.write(tcp_payload.decode('utf-8'))
-                        f.write('\n')
-                        print('Payload saved to file: ', file_name, '.txt')
-
+                # use select to listen on the socket with a timeout of 1 second
+                ready, _, _ = select.select([sniffer], [], [], 1)
+                if ready:
+                    # receive a packet and extract the TCP payload
+                    packet_data = sniffer.recvfrom(65565)[0]
+                    ip_header_len = (packet_data[0] & 0x0F) * 4
+                    tcp_payload = packet_data[ip_header_len + 20:]
+                    print(tcp_payload.decode('utf-8'))  # print the payload to the console
+                    last_activity_time = time.time()  # update the last activity time
+                    user_input = input('')
+                    if user_input == 's':
+                        sniffer.close()
+                        break
+                    elif user_input == 'f':
+                        file_name = input("Enter a file name to save the output: ")
+                        with open(file_name, 'a') as f:
+                            f.write(tcp_payload.decode('utf-8'))
+                            f.write('\n')
+                            print('Payload saved to file: ', file_name, '.txt')
+                else:
+                    if time.time() - last_activity_time >= 3:  # check if 3 seconds passed since last packet received
+                        print("No activity on the socket for 3 seconds")
+                        break
         except KeyboardInterrupt:
-            # close the socket on keyboard interrupt
             sniffer.close()
 
 class info: # o3
