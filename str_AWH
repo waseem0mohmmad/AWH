@@ -35,7 +35,9 @@ def start():
             else:
                 ip = o2.final_scan_result[o2.por1 - 1]
                 o2.target_host = ip['ip']
-                print("target host ip is : ",o2.target_host)
+                print("-----------------------------------------------")
+                print('\033[91m"target host ip is : "',o2.target_host)
+                print("-----------------------------------------------")
         elif isinstance(por1, str):
             if por1 in ss:
                 o1.intfc = ""
@@ -51,19 +53,49 @@ def start():
                 po()
             elif por1 == "*":
                 sc()
-        o2.por = input("\n1- all ports\n2- chose port number\n3- chose ports range\n4- top 50 famous port\nenter number : ")
-        if o2.por != "":  # (PORT SCANNING) chose ip number : --> 1- all ports 2- chose ports range 3- top 50 famous port
+        o2.por = input("\n1-top 50 famous port\n2- chose port number\n3- chose ports range\n4-all ports top 50 famous port\nenter number : ")
+        if o2.por != "":  # (PORT SCANNING) chose ip number : --> 1- all ports 2- chose port number 3- chose ports range 3- top 50 famous port
             if o2.por == "1":  # 1- all ports
-                print("\n------------------------------------------------")
-                o2.port_scan(o2.target_host,o2.start_port,o2.end_port)
-            elif o2.por =="2":
-                port = input("enter port number : ")
-                print("\n------------------------------------------------")
-                try:
-                    port = int(port)
-                    print(port, type(port))
-                except:
-                    pass
+                print("Those are the Most common Protocols")
+                ports = [[22, "SSH"],[23, "Telnet"],[25, "SMTP"],[53, "DNS"],[80, "HTTP"],[110, "POP3"],[119, "NNTP"],[123, "NTP"],
+                         [135, "MSRPC"],[139, "NetBIOS"],[143, "IMAP"],[443, "HTTPS"],[445, "SMB"],[465, "SMTPS"],[5060, "SIP"],
+                         [5432, "PostgreSQL"],[563, "NNTPS"],[587, "SMTP (Submission)"],[5900, "VNC"],[5901, "VNC"],[993, "IMAPS"],
+                         [995, "POP3S"],[1433, "MSSQL"],[1434, "MSSQL (Browser Service)"],[1521, "Oracle"],[1720, "H.323"],[1723, "PPTP"],
+                         [3306, "MySQL"],[3389, "RDP"],[389, "LDAP"],[465, "SMTPS"],[5060, "SIP"],[5666, "NRPE"],[27015, "Steam"],
+                         [27017, "MongoDB"],[28015, "Steam"],[3306, "MySQL"],[3389, "RDP"], [10000, "Webmin"]]
+                print("\033[31m Write down the Port's number \033[0m" + 'number')
+                conter = 0
+                for port in ports:
+                        print(f"[{port[0]}]: {port[1]}")
+                        conter += 1
+                        if conter % 5 == 0:
+                            print()
+                for i in o2.top_50:
+                    o2.port_scan(o2.target_host, i, i)
+            elif o2.por =="2":#2- chose port number
+                port_list = []
+                print("[+] ")
+                while True:
+                    port = input("enter port number : ")
+                    try:
+                        port = int(port)
+                        print(port, type(port))
+                    except:
+                        pass
+                    if isinstance(port, int):
+                        port_list.append(port)
+                        print(port)
+                    elif isinstance(port, str):
+                        if port == "r":
+                            break
+                        elif port in ss:
+                            MQ(port)
+                        elif port == "*":
+                            po()
+                        else:
+                            print("\n*********************************************")
+                            print("\n******* Wrong value po 3 ********")
+                            print("\n*********************************************")
                 if isinstance(port, int):
                     # if port >= 65535 and port <= 0:
                     #     print("port number is : ",port)
@@ -74,15 +106,6 @@ def start():
                     #     print("\n*********************************************")
                     o2.port_scan(o2.target_host, port, port)
                     po()
-                elif isinstance(port, str):
-                    if port in ss:
-                        MQ(port)
-                    elif port == "*":
-                        po()
-                    else:
-                        print("\n*********************************************")
-                        print("\n******* Wrong value po 3 ********")
-                        print("\n*********************************************")
 
             elif o2.por == "3":  # 2- chose ports range
                 print("\n------------------------------------------------")
@@ -93,7 +116,7 @@ def start():
                 except:
                     pass
                 if isinstance(start_port, int):
-                    if not(0 >= int(start_port) >= 65535):
+                    if not(0 >= start_port and start_port >= 65535):
                         print("\n*********************************************")
                         print("\n******* Wrong value po 4 ********")
                         print("\n*********************************************")
@@ -130,12 +153,11 @@ def start():
                         print("\n******* Wrong value po 7 ********")
                         print("\n*********************************************")
                         po()
-                
+
                 o2.port_scan(o2.target_host, o2.start_port, o2.end_port)
-            elif o2.por == "4":  # 3- top 50 famous port
+            elif o2.por == "4":  # 4- all ports
                 print("\n------------------------------------------------")
-                for i in o2.top_50:
-                    o2.port_scan(o2.target_host, i, i)
+
             elif o2.por == "*":  # *-back
                 o2.por = " "
                 sc()
