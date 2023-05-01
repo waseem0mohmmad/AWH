@@ -121,7 +121,7 @@ class scanning: # o2
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(1)
                 result = sock.connect_ex((target_host, port))
-                if result != 0:  # check if the connection was successful (i.e., the port is open)
+                if result == 0:  # check if the connection was successful (i.e., the port is open)
                     self.final_port_result.append({"ip": target_host, "port": port, "result": result})
                     self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
                 sock.close()
@@ -135,11 +135,14 @@ class scanning: # o2
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(1)
         result = sock.connect_ex((target_host, port))
-        if result != 0:  # check if the connection was successful (i.e., the port is open)
+        if result == 0:  # check if the connection was successful (i.e., the port is open)
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
             print(self.final_port_result)
             print("in if in port scan")
             #self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
+        elif result != 0:
+            self.final_port_result.append({"ip": target_host, "port": port, "result": result})
+            print(self.final_port_result)
         sock.close()
         self.display_port_result(self.final_port_result)
 
