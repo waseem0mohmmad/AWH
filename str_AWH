@@ -228,7 +228,6 @@ def start():
                 print("")
             elif o4.sniff == "3":
                 o4.TCP()
-                sf
             elif o4.sniff == "4":
                 print("")
             elif o4.sniff == "5":
@@ -244,7 +243,6 @@ def start():
                 sf()
 
     def gs():
-        print("gs")
         o1.get_started()
         if o1.num != "": # (get start) 1-scanning 2-sniffing *-back
             if o1.num == "1": # 1-scanning
