@@ -29,6 +29,7 @@ class scanning: # o2
     subnet_mask = ""
     final_scan_result = []
     final_port_result = []
+    final_port_result_range = []
     por = ""
     por1 = 0
     target_host = "0.0.0.0"
@@ -36,6 +37,7 @@ class scanning: # o2
     end_port = 65535
     scan_ans_ls = []
     port_ans_ls = []
+    port_ans_ls_range = []
     top_50=[80, 443, 22, 53, 25, 110, 143, 21, 3306, 3389, 1194, 1723, 23, 1720, 5060, 1723, 119, 123, 139, 445, 135, 3306,
             3389, 5900, 995, 993, 1433, 1434, 587, 1521, 389, 5000, 5901, 110, 2222, 1194, 465, 3306, 21, 27017, 5666, 143,
             10000, 27015, 5432, 1723, 563, 3306, 28015, 3389]
@@ -122,8 +124,8 @@ class scanning: # o2
                 sock.settimeout(1)
                 result = sock.connect_ex((target_host, port))
                 if result == 0:  # check if the connection was successful (i.e., the port is open)
-                    self.final_port_result.append({"ip": target_host, "port": port, "result": result})
-                    self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
+                    self.final_port_result_range.append({"ip": target_host, "port": port, "result": result})
+                    self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if x not in self.final_port_result_range[:i]]
                 sock.close()
         else:
             exit(self.por_scan())
