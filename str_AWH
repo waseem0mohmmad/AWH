@@ -28,7 +28,6 @@ def start():
                 port = input("enter port number : ")
                 try:
                     port = int(port)
-                    print(port, type(port))
                 except:
                     pass
                 if isinstance(port, int):
@@ -36,7 +35,16 @@ def start():
                     print(port_list)
                 elif isinstance(port, str):
                     if port == "r":  # chek if port list is int oe str
-                        break
+                        print(o2.target_host)
+                        i = 0
+                        for i in port_list:
+                            print(i)
+                            if i < len(port_list):
+                                print(i)
+                                o2.port_scan(o2.target_host, port_list[i])
+                            i = +1
+                            print(i)
+                        po()
                     elif port in ss:
                         MQ(port)
                     elif port == "*":
@@ -45,16 +53,16 @@ def start():
                         print("\n*********************************************")
                         print("\n******* Wrong value po 3 ********")
                         print("\n*********************************************")
-            if isinstance(port, int):
-                if 0 <= port <= 65535:
-                    for i in port_list:
-                        o2.port_scan(o2.target_host, i)
-                        po()
-                else:
-                    print("\n*********************************************")
-                    print("\n******* Wrong value po 2 ********")
-                    print("\n*********************************************")
-                    po()
+            # if isinstance(port, int):
+            #     if 0 <= port <= 65535:
+            #         for i in port_list:
+            #             o2.port_scan(o2.target_host, i)
+            #             po()
+            #     else:
+            #         print("\n*********************************************")
+            #         print("\n******* Wrong value po 2 ********")
+            #         print("\n*********************************************")
+            #         po()
         o2.por_scan()
         por1 = input("chose ip number : ")
         try:
@@ -99,14 +107,14 @@ def start():
                          [995, "POP3S"],[1433, "MSSQL"],[1434, "MSSQL (Browser Service)"],[1521, "Oracle"],[1720, "H.323"],[1723, "PPTP"],
                          [3306, "MySQL"],[3389, "RDP"],[389, "LDAP"],[465, "SMTPS"],[5060, "SIP"],[5666, "NRPE"],[27015, "Steam"],
                          [27017, "MongoDB"],[28015, "Steam"],[3306, "MySQL"],[3389, "RDP"], [10000, "Webmin"]]
-                print("\033[31m Write down the Port's number \033[0m" + 'number')
+                print("\033[31m Write down the Port's number \033[0m" + '')
                 conter = 0
                 for i, port in enumerate(ports):
                     print(f"{i+1}- [{port[0]}]: {port[1]}", end=' ')
                     conter += 1
                     if conter % 5 == 0:
                         print()
-                enter = input("1- all\n2- chose ports\nenter number: ")
+                enter = input("\n\n1- all\n2- chose ports\nenter number: ")
                 if enter == "1":
                     for i in o2.top_50:
                         o2.port_scan(o2.target_host, i,)
@@ -123,7 +131,10 @@ def start():
                     print("\n*********************************************")
                     po()
             elif o2.por =="2":#2- chose port number
-                port_chek()
+                enter = input("enter port number")
+                o2.port_scan(o2.target_host, int(enter))
+                po()
+                #port_chek()
             elif o2.por == "3":  # 3- chose ports range
                 print("\n------------------------------------------------")
                 start_port = input("Enter the start port number: ")
@@ -133,7 +144,7 @@ def start():
                 except:
                     pass
                 if isinstance(start_port, int):
-                    if 0 < start_port or start_port > 65535:
+                    if 0 > start_port or start_port > 65535:
                         print("\n*********************************************")
                         print("\n******* Wrong value po 4 ********")
                         print("\n*********************************************")
@@ -155,7 +166,7 @@ def start():
                 except:
                     pass
                 if isinstance(end_port, int):
-                    if start_port < end_port or end_port > 65535:
+                    if start_port > end_port or end_port > 65535:
                         print("\n*********************************************")
                         print("\n******* Wrong value po 6 ********")
                         print("\n*********************************************")
@@ -217,6 +228,7 @@ def start():
                 print("")
             elif o4.sniff == "3":
                 o4.TCP()
+                sf
             elif o4.sniff == "4":
                 print("")
             elif o4.sniff == "5":
@@ -248,6 +260,7 @@ def start():
                 print("\n******* Wrong value 2 ********")
                 print("\n*********************************************")
                 gs()
+
     def h():
         o3.help()
         if o3.hlp != "": # (help) 1-How to scan the Network 2-How to sniff the Network *-Back
@@ -268,6 +281,7 @@ def start():
                 print("\n******* Wrong value 3 ********")
                 print("\n*********************************************")
                 h()
+
     def ab():
         o3.about()
         if o3.abot != "": # 3 - about
@@ -281,6 +295,7 @@ def start():
                 print("\n******* Wrong value 4 ********")
                 print("\n*********************************************")
                 ab()
+
     def m():
         o1.start_all()
         if o1.intfc != "": # main menu (M)
