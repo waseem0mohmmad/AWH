@@ -38,10 +38,12 @@ class scanning: # o2
     scan_ans_ls = []
     port_ans_ls = []
     port_ans_ls_range = []
-    top_50=[80, 443, 22, 53, 25, 110, 143, 21, 3306, 3389, 1194, 1723, 23, 1720, 5060, 1723, 119, 123, 139, 445, 135, 3306,
-            3389, 5900, 995, 993, 1433, 1434, 587, 1521, 389, 5000, 5901, 110, 2222, 1194, 465, 3306, 21, 27017, 5666, 143,
-            10000, 27015, 5432, 1723, 563, 3306, 28015, 3389]
-
+    ports = [[22, "SSH"], [23, "Telnet"], [25, "SMTP"], [53, "DNS"], [80, "HTTP"], [110, "POP3"], [119, "NNTP"],[123, "NTP"],
+             [135, "MSRPC"], [139, "NetBIOS"], [143, "IMAP"], [443, "HTTPS"], [445, "SMB"], [465, "SMTPS"],[5060, "SIP"],
+             [5432, "PostgreSQL"], [563, "NNTPS"], [587, "SMTP (Submission)"], [5900, "VNC"], [5901, "VNC"],[993, "IMAPS"],
+             [995, "POP3S"], [1433, "MSSQL"], [1434, "MSSQL (Browser Service)"], [1521, "Oracle"], [1720, "H.323"],[1723, "PPTP"],
+             [3306, "MySQL"], [3389, "RDP"], [389, "LDAP"], [465, "SMTPS"], [5060, "SIP"], [5666, "NRPE"],[27015, "Steam"],
+             [27017, "MongoDB"], [28015, "Steam"], [3306, "MySQL"], [3389, "RDP"], [10000, "Webmin"]]
 
     def get_my_ip(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -84,7 +86,6 @@ class scanning: # o2
     def por_scan(self):
         print("\n------------------------------------------------")
 
-
         def display_scan_result(result):
             print("----------------------------------------")
             print("IP")
@@ -99,6 +100,7 @@ class scanning: # o2
             display_scan_result(self.final_scan_result)
         elif len(self.final_scan_result) != 0:
             display_scan_result(self.final_scan_result)
+
     def display_port_result(self,final_result):
         print("---------------------------------------------------------")
         print("IP\t\t| PORT \t| STATUS")
@@ -117,7 +119,8 @@ class scanning: # o2
         for i in final_result:
             print("\033[95m{}\t\033[0m|\033[94m{}\033[0m".format(i["ip"], i["port"]))
         print("---------------------------------------------------------")
-    def port_scan_range(self,target_host, start_port, end_port):  #
+
+    def port_scan_range(self, target_host, start_port, end_port):  #
         if len(self.scan_ans_ls) != 0:
             for port in range(start_port, end_port + 1):
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -127,11 +130,11 @@ class scanning: # o2
                     self.final_port_result_range.append({"ip": target_host, "port": port, "result": result})
                     self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if x not in self.final_port_result_range[:i]]
                 sock.close()
-        else:
+        else:#fix the list that take the start and end from
             exit(self.por_scan())
-        self.final_port_result = sorted(self.final_port_result,key=lambda x: x['port'])  # sort the results by port number
-        self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
-        self.display_port_result_range(self.final_port_result)#chek if it shoud be dectionare list
+        self.final_port_result_range = sorted(self.final_port_result_range,key=lambda x: x['port'])  # sort the results by port number
+        self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if x not in self.final_port_result_range[:i]]
+        self.display_port_result_range(self.final_port_result_range)#chek if it shoud be dectionare list
 
     def port_scan(self, target_host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -141,12 +144,12 @@ class scanning: # o2
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
             print(self.final_port_result)
             print("in if in port scan")
-            #self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
         elif result != 0:
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
-            print(self.final_port_result)
+            # self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
+            # print(self.final_port_result)
         sock.close()
-        self.display_port_result(self.final_port_result)
+        # self.display_port_result(self.final_port_result)
 
 
 class snifing:
