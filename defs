@@ -38,13 +38,15 @@ class scanning: # o2
     scan_ans_ls = []
     port_ans_ls = []
     port_ans_ls_range = []
+    port_list = []
     ports = [[22, "SSH"], [23, "Telnet"], [25, "SMTP"], [53, "DNS"], [80, "HTTP"], [110, "POP3"], [119, "NNTP"],[123, "NTP"],
              [135, "MSRPC"], [139, "NetBIOS"], [143, "IMAP"], [443, "HTTPS"], [445, "SMB"], [465, "SMTPS"],[5060, "SIP"],
-             [5432, "PostgreSQL"], [563, "NNTPS"], [587, "SMTP (Submission)"], [5900, "VNC"], [5901, "VNC"],[993, "IMAPS"],
-             [995, "POP3S"], [1433, "MSSQL"], [1434, "MSSQL (Browser Service)"], [1521, "Oracle"], [1720, "H.323"],[1723, "PPTP"],
+             [5432, "PostgreSQL"], [563, "NNTPS"], [587, "SMTP"], [5900, "VNC"], [5901, "VNC"],[993, "IMAPS"],
+             [995, "POP3S"], [1433, "MSSQL"], [1434, "MSSQL"], [1521, "Oracle"], [1720, "H.323"],[1723, "PPTP"],
              [3306, "MySQL"], [3389, "RDP"], [389, "LDAP"], [465, "SMTPS"], [5060, "SIP"], [5666, "NRPE"],[27015, "Steam"],
              [27017, "MongoDB"], [28015, "Steam"], [3306, "MySQL"], [3389, "RDP"], [10000, "Webmin"]]
-
+            #1434, "MSSQL (Browser Service)
+            # #these is 39 ports we need 1 more at least
     def get_my_ip(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("192.168.26.2", 80))
@@ -72,12 +74,12 @@ class scanning: # o2
         print("\n------------------------------------------------")
 
         def display_scan_result(result):
-            print("----------------------------------------")
-            print("IP\t\t|MAC ADDRESS")
-            print("----------------------------------------")
+            print("|------------------------------------|")
+            print("| IP\t\t | MAC ADDRESS\t     |")
+            print("|----------------|-------------------|")
             for i in result:
-                print("{}\t|\t{}".format(i["ip"], i["mac"], ))
-            print("----------------------------------------")
+                print("| {:<15}| {}".format(i["ip"], i["mac"]),end=" |\n")
+            print("|------------------------------------|")
         self.get_my_ip()
         self.get_ARP(self.my_network, 2)
         #set(self.final_scan_result)
@@ -87,38 +89,38 @@ class scanning: # o2
         print("\n------------------------------------------------")
 
         def display_scan_result(result):
-            print("----------------------------------------")
-            print("IP")
-            print("----------------------------------------")
+            print("|--------------------|")
+            print("|\t  IP\t     |")
+            print("|--------------------|")
             for i, ip in enumerate(result):
-                print(i+1, '-', "{}".format(ip["ip"]))
-            print("----------------------------------------")
+                print('|', i+1, '-', "{:<15}".format(ip["ip"]),end="|\n")
+            print("|--------------------|")
         if len(self.final_scan_result) == 0:
             self.get_my_ip()
             self.get_ARP(self.my_network, 2)
-            #self.final_scan_result = list(set(self.final_scan_result))
+            self.final_scan_result = [x for i, x in enumerate(self.final_scan_result) if x not in self.final_scan_result[:i]]
             display_scan_result(self.final_scan_result)
         elif len(self.final_scan_result) != 0:
             display_scan_result(self.final_scan_result)
 
     def display_port_result(self,final_result):
-        print("---------------------------------------------------------")
-        print("IP\t\t| PORT \t| STATUS")
-        print("----------------|-------|-----------------------------")
+        print("\n--------------------------------------------")
+        print("IP\t\t| PORT \t| STATUS\t   |")
+        print("----------------|-------|-------------------")
         for i in final_result:
             if isinstance(i, dict) and "result" in i:
                 status = "OPEN" if i["result"] == 0 else "CLOSED/Filtered"
                 status_color = "\033[92m" if i["result"] == 0 else "\033[91m"
-                print("{}\t| {}\t| {}{}\033[0m".format(i["ip"], i["port"], status_color, status))
-        print("---------------------------------------------------------")
+                print("{}\t| {}\t| {}{}\033[0m |".format(i["ip"], i["port"], status_color, status))
+        print("--------------------------------------------\n")
 
     def display_port_result_range(self,final_result):
-        print("---------------------------------------------------------")
+        print("\n---------------------------------------------------------")
         print("IP\t\t|OPEN PORTS")
         print("----------------|----------------------------------------")
         for i in final_result:
             print("\033[95m{}\t\033[0m|\033[94m{}\033[0m".format(i["ip"], i["port"]))
-        print("---------------------------------------------------------")
+        print("---------------------------------------------------------\n")
 
     def port_scan_range(self, target_host, start_port, end_port):  #
         if len(self.scan_ans_ls) != 0:
