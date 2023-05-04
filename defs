@@ -38,7 +38,7 @@ class scanning: # o2
     scan_ans_ls = []
     port_ans_ls = []
     port_ans_ls_range = []
-    port_list = []
+
     ports = [[22, "SSH"], [23, "Telnet"], [25, "SMTP"], [53, "DNS"], [80, "HTTP"], [110, "POP3"], [119, "NNTP"],[123, "NTP"],
              [135, "MSRPC"], [139, "NetBIOS"], [143, "IMAP"], [443, "HTTPS"], [445, "SMB"], [465, "SMTPS"],[5060, "SIP"],
              [5432, "PostgreSQL"], [563, "NNTPS"], [587, "SMTP"], [5900, "VNC"], [5901, "VNC"],[993, "IMAPS"],
@@ -74,12 +74,12 @@ class scanning: # o2
         print("\n------------------------------------------------")
 
         def display_scan_result(result):
-            print("|------------------------------------|")
+            print("--------------------------------------")
             print("| IP\t\t | MAC ADDRESS\t     |")
             print("|----------------|-------------------|")
             for i in result:
                 print("| {:<15}| {}".format(i["ip"], i["mac"]),end=" |\n")
-            print("|------------------------------------|")
+            print("--------------------------------------")
         self.get_my_ip()
         self.get_ARP(self.my_network, 2)
         #set(self.final_scan_result)
@@ -89,12 +89,12 @@ class scanning: # o2
         print("\n------------------------------------------------")
 
         def display_scan_result(result):
-            print("|--------------------|")
+            print("----------------------")
             print("|\t  IP\t     |")
             print("|--------------------|")
             for i, ip in enumerate(result):
                 print('|', i+1, '-', "{:<15}".format(ip["ip"]),end="|\n")
-            print("|--------------------|")
+            print("----------------------")
         if len(self.final_scan_result) == 0:
             self.get_my_ip()
             self.get_ARP(self.my_network, 2)
