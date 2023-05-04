@@ -211,7 +211,7 @@ def start():
                     if port in [p[0] for p in o2.ports]:
                         if port not in port_list:
                             port_list.append(port)
-                        if port in port_list:
+                        elif port in port_list:
                             print("\nyou already entered this port number")
                         print("ports you enter : ", port_list)
                     else:
