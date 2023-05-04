@@ -194,12 +194,13 @@ def start():
             ip_port_scan()
 
         def port_check_for_top_50():
+            port_list = []
             print("\n-----------------------------------------------")
             print("[+] r start scanning\n[+] T to print the Most common ports table")
             print("-----------------------------------------------")
             print("\033[31m Write down the Port's number \033[0m" + '')
-            if len(o2.port_list) >= 1:
-                print("ports you enter : ", o2.port_list)
+            if len(port_list) >= 1:
+                print("ports you enter : ", port_list)
             while True:
                 port = input("enter port number : ")
                 try:
@@ -208,8 +209,11 @@ def start():
                     pass
                 if isinstance(port, int):
                     if port in [p[0] for p in o2.ports]:
-                        o2.port_list.append(port)
-                        print("ports you enter : ", o2.port_list)
+                        if port not in port_list:
+                            port_list.append(port)
+                        if port in port_list:
+                            print("\nyou already entered this port number")
+                        print("ports you enter : ", port_list)
                     else:
                         print("\n*********************************************")
                         print("\n******* Wrong value 184 ********")
@@ -242,7 +246,7 @@ def start():
                         port_check_for_top_50()
             print(o2.target_host)
             o2.final_port_result = []
-            for i in o2.port_list:
+            for i in port_list:
                 o2.port_scan(o2.target_host, i)
             o2.final_port_result = [x for i, x in enumerate(o2.final_port_result) if x not in o2.final_port_result[:i]]
             o2.display_port_result(o2.final_port_result)
@@ -314,6 +318,7 @@ def start():
                 print("")
             elif o4.sniff == "3":
                 o4.TCP()
+                sf()
             elif o4.sniff == "4":
                 print("")
             elif o4.sniff == "5":
