@@ -105,8 +105,8 @@ class scanning: # o2
 
     def display_port_result(self,final_result):
         print("\n--------------------------------------------")
-        print("IP\t\t| PORT \t| STATUS\t   |")
-        print("----------------|-------|-------------------")
+        print("|IP\t\t| PORT \t| STATUS\t   |")
+        print("|----------------|-------|-------------------|")
         for i in final_result:
             if isinstance(i, dict) and "result" in i:
                 status = "OPEN" if i["result"] == 0 else "CLOSED/Filtered"
@@ -114,13 +114,17 @@ class scanning: # o2
                 print("{}\t| {}\t| {}{}\033[0m |".format(i["ip"], i["port"], status_color, status))
         print("--------------------------------------------\n")
 
-    def display_port_result_range(self,final_result):
-        print("\n---------------------------------------------------------")
-        print("IP\t\t|OPEN PORTS")
-        print("----------------|----------------------------------------")
+    def display_port_result_range(self, final_result):
+        print("\n----------------------------------------------")
+        print("| IP\t\t  | OPEN PORTS\t\t     |")
+        print("|-----------------|--------------------------|")
+        print(final_result)
         for i in final_result:
-            print("\033[95m{}\t\033[0m|\033[94m{}\033[0m".format(i["ip"], i["port"]))
-        print("---------------------------------------------------------\n")
+            if len(final_result["port"]) <=  1:#chek thy type
+                print("\033[95m{}\033[0m\t| No open ports".format(i["ip"]))
+            else:
+                print("\033[95m{}\033[0m\t|\033[94m{}\033[0m".format(i["ip"], i["port"]))
+        print("----------------------------------------------\n")
 
     def port_scan_range(self, target_host, start_port, end_port):  #
         if len(self.scan_ans_ls) != 0:
@@ -131,12 +135,14 @@ class scanning: # o2
                 if result == 0:  # check if the connection was successful (i.e., the port is open)
                     self.final_port_result_range.append({"ip": target_host, "port": port, "result": result})
                     self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if x not in self.final_port_result_range[:i]]
+                    print("in if 137")
                 sock.close()
         else:#fix the list that take the start and end from
+            print("in else 140")
             exit(self.por_scan())
         self.final_port_result_range = sorted(self.final_port_result_range,key=lambda x: x['port'])  # sort the results by port number
         self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if x not in self.final_port_result_range[:i]]
-        self.display_port_result_range(self.final_port_result_range)#chek if it shoud be dectionare list
+        self.display_port_result_range(self.final_port_result_range)#chek if it shoud be dectionare lis
 
     def port_scan(self, target_host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
