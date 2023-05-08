@@ -85,12 +85,11 @@ def start():
                     ip_port_scan()
                 elif o2.por == "3":  # 3- chose ports number
                     port_chek()
-                elif o2.por == "4":  # 3- chose ports range
+                elif o2.por == "4":  # 4- chose ports range
                     print("\n------------------------------------------------")
                     start_port = input("Enter the start port number: ")
                     try:
                         start_port = int(start_port)
-                        o2.start_port = start_port
                     except:
                         pass
                     if isinstance(start_port, int):
@@ -112,7 +111,6 @@ def start():
                     end_port = input("Enter the end port number: ")
                     try:
                         end_port = int(end_port)
-                        o2.end_port = end_port
                     except:
                         pass
                     if isinstance(end_port, int):
@@ -131,7 +129,9 @@ def start():
                             print("\n******* Wrong value po 7 ********")
                             print("\n*********************************************")
                             ip_port_scan()
-                    o2.port_scan_range(o2.target_host, o2.start_port, o2.end_port)
+
+                    print(o2.target_host,type(o2.target_host),start_port,type(start_port),end_port,type(end_port))
+                    o2.port_scan_range(o2.target_host, start_port, end_port)
                     ip_port_scan()
                 elif o2.por == "5":  # 4- all ports
                     print("\n------------------------------------------------")
