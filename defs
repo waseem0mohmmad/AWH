@@ -1,4 +1,6 @@
 from scapy.layers.l2 import ARP, Ether, srp
+from scapy.layers import http
+import scapy.all as scapy
 import socket
 import time
 import select
@@ -104,26 +106,25 @@ class scanning: # o2
             display_scan_result(self.final_scan_result)
 
     def display_port_result(self,final_result):
-        print("\n--------------------------------------------")
-        print("|IP\t\t| PORT \t| STATUS\t   |")
-        print("|----------------|-------|-------------------|")
+        print("\n-------------------------------------------")
+        print("|IP\t\t| PORT \t| STATUS\t  |")
+        print("|---------------|-------|-----------------|")
         for i in final_result:
             if isinstance(i, dict) and "result" in i:
                 status = "OPEN" if i["result"] == 0 else "CLOSED/Filtered"
                 status_color = "\033[92m" if i["result"] == 0 else "\033[91m"
-                print("{}\t| {}\t| {}{}\033[0m |".format(i["ip"], i["port"], status_color, status))
-        print("--------------------------------------------\n")
+                print("|{}\t| {}\t| {}{:<15}\033[0m |".format(i["ip"], i["port"], status_color, status))
+        print("-------------------------------------------\n")
 
     def display_port_result_range(self, final_result):
+        print(final_result)
         print("\n----------------------------------------------")
         print("| IP\t\t  | OPEN PORTS\t\t     |")
         print("|-----------------|--------------------------|")
-        print(final_result)
         for i in final_result:
-            if len(final_result["port"]) <=  1:#chek thy type
-                print("\033[95m{}\033[0m\t| No open ports".format(i["ip"]))
-            else:
-                print("\033[95m{}\033[0m\t|\033[94m{}\033[0m".format(i["ip"], i["port"]))
+            print("\033[95m{}\033[0m\t|\033[94m{}\033[0m".format(i["ip"], i["port"]))
+        if not final_result:  # check if the list is empty
+            print("| No open ports found in the specified range |")
         print("----------------------------------------------\n")
 
     def port_scan_range(self, target_host, start_port, end_port):  #
@@ -164,7 +165,7 @@ class snifing:
     sniff = ''
     def sniffing(self):
         print("\n------------------------------------------------")
-        print("1-all\n2-HTTP\n3-TCP\n4-UDP\n5-IP\n*-back")
+        print("1-HTTP\n2-DNS\n3-FTP\n4-SSH\n*-back")#1-HTTP 2-dns 3-ftp 4-ssh *-back
         self.sniff = input("enter number : ")
 
     def TCP(self):
@@ -207,6 +208,55 @@ class snifing:
         except KeyboardInterrupt:
             sniffer.close()
 
+    def http(self):
+        def sniff(interface):
+            scapy.sniff(iface=interface, store=False, prn=process_sniffed_packet, filter="port 80")
+
+        def process_sniffed_packet(packet):
+            if packet.haslayer(http.HTTPRequest):
+                if packet.haslayer(scapy.Raw):
+                    load = packet[scapy.Raw].load.decode()  # Convert bytes to string using decode()
+                    keywords = ["username", "user", "login", "password", "pass", "usr", "userID", "uname", "email",
+                                "userPassword", "pswd", "pwd"]
+                    for keyword in keywords:
+                        if keyword in load:
+                            print(load)
+                            break
+
+        sniff("eth0")
+
+    def dns(self):
+        def sniff_dns_packets(interface):
+            scapy.sniff(iface=interface, filter="port 53", prn=process_dns_packet)
+
+        def process_dns_packet(packet):
+            if packet.haslayer(scapy.DNS):
+                dns_packet = packet[scapy.DNS]
+                print(dns_packet.summary())
+
+        sniff_dns_packets("eth0")
+
+    def ftp(self):
+        def sniff_ftp_packets(interface):
+            scapy.sniff(iface=interface, filter="port 21", prn=process_ftp_packet)
+
+        def process_ftp_packet(packet):
+            if packet.haslayer(scapy.TCP) and packet.haslayer(scapy.Raw):
+                ftp_packet = packet[scapy.Raw].load
+                print(ftp_packet)
+
+        sniff_ftp_packets("eth0")
+
+    def ssh(self):
+        def sniff_ssh_packets(interface):
+            scapy.sniff(iface=interface, filter="port 22", prn=process_ssh_packet)
+
+        def process_ssh_packet(packet):
+            if packet.haslayer(scapy.TCP) and packet.haslayer(scapy.Raw):
+                ssh_packet = packet[scapy.Raw].load
+                print(ssh_packet)
+
+        sniff_ssh_packets("eth0")
 class info: # o3
     hlp = ''
     abot = ''
