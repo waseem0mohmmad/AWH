@@ -291,13 +291,12 @@ def start():
         o2.scanning()
         if o2.scan != "": # (scanning) 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
             if o2.scan == "1": # 1-NETWORK SCANNING
-                #o2.scan = ""
                 o2.net_scan()
                 sc()
             elif o2.scan == "2": # 2-PORT SCANNING
                 po()
             elif o2.scan == "3": # 3-VULNERABILITY SCANNING
-                print("")
+                print("It will be futioer work")
             elif o2.scan == "*":  # *-back
                 o2.scan = ""
                 gs()
@@ -311,18 +310,19 @@ def start():
 
     def sf():
         o4.sniffing()
-        if o4.sniff != "": #1-all 2-HTTP 3-TCP 4-UDP 5-IP *-back
+        if o4.sniff != "": #1-HTTP 2-dns 3-ftp 4-ssh *-back
             if o4.sniff == "1":
-                print("")
+                o4.http()
+                sf()
             elif o4.sniff == "2":
-                print("")
+                o4.dns()
+                sf()
             elif o4.sniff == "3":
-                o4.TCP()
+                o4.ftp()
                 sf()
             elif o4.sniff == "4":
-                print("")
-            elif o4.sniff == "5":
-                print("")
+                o4.ssh()
+                sf()
             elif o4.sniff == "*":
                 gs()
             elif o4.sniff in ss:
@@ -339,7 +339,7 @@ def start():
             if o1.num == "1": # 1-scanning
                 sc() # 1-NETWORK SCANNING 2-PORT SCANNING 3-VULNERABILITY SCANNING *-back
             elif o1.num == "2": # 2-sniffing
-                sf()
+                sf() #1-HTTP 2-dns 3-ftp 4-ssh *-back
             elif o1.num == "*" : # *-back + main menu (M) (get started)
                 m()
             elif o1.num in ss:
