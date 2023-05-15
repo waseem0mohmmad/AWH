@@ -267,7 +267,7 @@ class info: # o3
 
     def about(self):
         print("\n------------------------------------------------")
-        print("This tool is specialized in a number of tasks that may benefit you in SCAN , SNIFF or DISCOVER your private network or in your Penetration testing. ")
+        print("This tool is specialized in a number of tasks that may benefit you in SCAN or SNIFF your private network or in your Penetration testing. ")
         print("created by:\n.Ahmad Almasharqa \n.Hanin Hashaikah \n.Waseem Mohammad ")
         self.abot = input("\npress * to back to main menu\n")
 def qut():
