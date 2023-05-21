@@ -1,6 +1,6 @@
 import subprocess
 import random
 def fontStyl():
-    font=["big","banner","slant","standard"]
-    fon=random.choice(font)
+    font = ["big", "slant", "standard"]
+    fon = random.choice(font)
     subprocess.call("figlet -f " + fon + " 'WISE -- AWH'", shell=True)
