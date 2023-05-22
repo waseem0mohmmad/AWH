@@ -1,5 +1,7 @@
 from scapy.layers.l2 import ARP, Ether, srp
 from scapy.layers import http
+from scapy.layers.dns import DNS
+from scapy.layers.inet import TCP
 import scapy.all as scapy
 import socket
 import time
@@ -22,6 +24,7 @@ class intro: # o1
         print("\n------------------------------------------------")
         print("1-scanning\n2-sniffing\n*-back")
         self.num = input("enter numer : ")
+
 
 class scanning: # o2
     ss = ["q", "Q", "m", "M", "*"]
@@ -165,98 +168,116 @@ class snifing:
     sniff = ''
     def sniffing(self):
         print("\n------------------------------------------------")
-        print("1-HTTP\n2-DNS\n3-FTP\n4-SSH\n*-back")#1-HTTP 2-dns 3-ftp 4-ssh *-back
+        print("1-HTTP\n2-DNS\n3-FTP\n*-back")#1-HTTP 2-dns 3-ftp 4-ssh *-back
         self.sniff = input("enter number : ")
 
-    def TCP(self):
-        # create a raw socket and bind it to the network interface
-        sniffer = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
-        sniffer.bind(('0.0.0.0', 0))
-        # enable IP header reception on the socket
-        sniffer.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL, 1)
-        sniffer.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024 * 1024)
-        print("\n------------------------------------------------")
-        print("[+] s  stop sniffer\n[+] f  save the result")
-        print("------------------------------------------------")
-        print("Sniffer running...")
-        try:
-            last_activity_time = time.time()
-            while True:
-                # use select to listen on the socket with a timeout of 1 second
-                ready, _, _ = select.select([sniffer], [], [], 1)
-                if ready:
-                    # receive a packet and extract the TCP payload
-                    packet_data = sniffer.recvfrom(65565)[0]
-                    ip_header_len = (packet_data[0] & 0x0F) * 4
-                    tcp_payload = packet_data[ip_header_len + 20:]
-                    print(tcp_payload.decode('utf-8'))  # print the payload to the console
-                    last_activity_time = time.time()  # update the last activity time
-                    user_input = input('')
-                    if user_input == 's':
-                        sniffer.close()
-                        break
-                    elif user_input == 'f':
-                        file_name = input("Enter a file name to save the output: ")
-                        with open(file_name, 'a') as f:
-                            f.write(tcp_payload.decode('utf-8'))
-                            f.write('\n')
-                            print('Payload saved to file: ', file_name, '.txt')
-                else:
-                    if time.time() - last_activity_time >= 3:  # check if 3 seconds passed since last packet received
-                        print("No activity on the socket for 3 seconds")
-                        break
-        except KeyboardInterrupt:
-            sniffer.close()
-
     def http(self):
-        def sniff(interface):
-            scapy.sniff(iface=interface, store=False, prn=process_sniffed_packet, filter="port 80")
+        def sniff_packets(interface):
+            packets = []
 
-        def process_sniffed_packet(packet):
-            if packet.haslayer(http.HTTPRequest):
-                if packet.haslayer(scapy.Raw):
-                    load = packet[scapy.Raw].load.decode()  # Convert bytes to string using decode()
-                    keywords = ["username", "user", "login", "password", "pass", "usr", "userID", "uname", "email",
-                                "userPassword", "pswd", "pwd"]
-                    for keyword in keywords:
-                        if keyword in load:
-                            print(load)
-                            break
+            def process_http_packet(packet):
+                if packet.haslayer(http.HTTPRequest):
+                    if packet.haslayer(scapy.Raw):
+                        load = packet[scapy.Raw].load.decode()  # Convert bytes to string using decode()
+                        keywords = ["username", "user", "login", "password", "pass", "usr", "userID", "uname", "email",
+                                    "userPassword", "pswd", "pwd"]
+                        for keyword in keywords:
+                            if keyword in load:
+                                packets.append(load)
+                                print(load)
+                                break
 
-        sniff("eth0")
+            sniff_thread = scapy.AsyncSniffer(iface=interface, store=False, prn=process_http_packet, filter="port 80")
+            sniff_thread.start()
+
+            while True:
+                user_input = input("[+] S to stop sniffing [+]\n[+] F to save the results [+] \n")
+                if user_input.lower() == 's':
+                    sniff_thread.stop()
+                    break
+                elif user_input.lower() == 'f':
+                    file_name = input("Enter a file name to save the output: ")
+                    with open('sniff results'):
+                        with open('http'):
+                            with open(file_name, 'w') as f:
+                                for packet in packets:
+                                    f.write(packet + '\n')
+                        print("Results saved to file:", file_name + "_http.txt")
+                        break
+
+        sniff_packets("eth0")
 
     def dns(self):
         def sniff_dns_packets(interface):
-            scapy.sniff(iface=interface, filter="port 53", prn=process_dns_packet)
+            packets = []  # List to store captured packets
+            sniff_thread = None
 
-        def process_dns_packet(packet):
-            if packet.haslayer(scapy.DNS):
-                dns_packet = packet[scapy.DNS]
-                print(dns_packet.summary())
+            def process_dns_packet(packet):
+                if packet.haslayer(DNS):
+                    dns_packet = packet[DNS]
+                    packets.append(dns_packet.summary())
+                    print(dns_packet.summary())
+
+            try:
+                sniff_thread = scapy.AsyncSniffer(iface=interface, filter="port 53", prn=process_dns_packet)
+                sniff_thread.start()
+
+                while True:
+                    user_input = input("[+] S to stop sniffing [+]\n[+] F to save the results [+] \n")
+                    if user_input.lower() == 's' or user_input.lower() == 'S':
+                        sniff_thread.stop()
+                        break
+                    elif user_input.lower() == 'f':
+                        file_name = input("Enter a file name to save the output: ")
+                        with open('sniff results'):
+                            with open(file_name, 'w') as f:
+                                for packet_summary in packets:
+                                    f.write(packet_summary + '\n')
+                            print("Results saved to file:", file_name)
+                            break
+            except KeyboardInterrupt:
+                if sniff_thread is not None:
+                    sniff_thread.stop()
 
         sniff_dns_packets("eth0")
 
     def ftp(self):
         def sniff_ftp_packets(interface):
-            scapy.sniff(iface=interface, filter="port 21", prn=process_ftp_packet)
+            packets = []
+            sniff_thread = None
 
-        def process_ftp_packet(packet):
-            if packet.haslayer(scapy.TCP) and packet.haslayer(scapy.Raw):
-                ftp_packet = packet[scapy.Raw].load
-                print(ftp_packet)
+            def process_ftp_packet(packet):
+                if packet.haslayer(TCP) and packet.haslayer(scapy.Raw):
+                    ftp_packet = packet[scapy.Raw].load.decode()
+                    packets.append(ftp_packet)
+                    print(ftp_packet)
+
+            try:
+                sniff_thread = scapy.AsyncSniffer(iface=interface, filter="port 21", prn=process_ftp_packet)
+                sniff_thread.start()
+
+                while True:
+                    user_input = input("[+] S to stop sniffing [+]\n[+] F to save the results [+] \n")
+                    if user_input.lower() == 's' or user_input.lower() == 'S':
+                        sniff_thread.stop()
+                        break
+                    elif user_input.lower() == 'f' or user_input.lower() == 'F':
+                        file_name = input("Enter a file name to save the output: ")
+                        try:
+                            with open(file_name, 'w') as f:
+                                for packet in packets:
+                                    f.write(packet + '\n')
+                            print("Results saved to file:", file_name)
+                            break
+                        except IOError as e:
+                            print("An error occurred while saving the results:", e)
+            except KeyboardInterrupt:
+                if sniff_thread is not None:
+                    sniff_thread.stop()
 
         sniff_ftp_packets("eth0")
 
-    def ssh(self):
-        def sniff_ssh_packets(interface):
-            scapy.sniff(iface=interface, filter="port 22", prn=process_ssh_packet)
 
-        def process_ssh_packet(packet):
-            if packet.haslayer(scapy.TCP) and packet.haslayer(scapy.Raw):
-                ssh_packet = packet[scapy.Raw].load
-                print(ssh_packet)
-
-        sniff_ssh_packets("eth0")
 class info: # o3
     hlp = ''
     abot = ''
@@ -270,5 +291,3 @@ class info: # o3
         print("This tool is specialized in a number of tasks that may benefit you in SCAN or SNIFF your private network or in your Penetration testing. ")
         print("created by:\n.Ahmad Almasharqa \n.Hanin Hashaikah \n.Waseem Mohammad ")
         self.abot = input("\npress * to back to main menu\n")
-def qut():
-    quit(qut)
