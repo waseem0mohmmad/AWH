@@ -310,7 +310,7 @@ def start():
 
     def sf():
         o4.sniffing()
-        if o4.sniff != "": #1-HTTP 2-dns 3-ftp 4-ssh *-back
+        if o4.sniff != "": #1-HTTP 2-dns 3-ftp *-back
             if o4.sniff == "1":
                 o4.http()
                 sf()
@@ -319,9 +319,6 @@ def start():
                 sf()
             elif o4.sniff == "3":
                 o4.ftp()
-                sf()
-            elif o4.sniff == "4":
-                o4.ssh()
                 sf()
             elif o4.sniff == "*":
                 gs()
