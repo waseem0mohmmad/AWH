@@ -53,7 +53,7 @@ def start():
                         ip_port_scan()
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 2 ********")
+                        print("\n******* Wrong value ********")
                         print("\n*********************************************")
                         po()
                 elif o2.por == "2":  #2- chose port number
@@ -66,7 +66,7 @@ def start():
                     if isinstance(enter, int):
                         if 0 > enter or enter > 65535:
                             print("\n*********************************************")
-                            print("\n******* Wrong value po 4 ********")
+                            print("\n******* Wrong value ********")
                             print("\n*********************************************")
                             ip_port_scan()
                     elif isinstance(enter, str):
@@ -76,7 +76,7 @@ def start():
                             ip_port_scan()
                         else:
                             print("\n*********************************************")
-                            print("\n******* Wrong value po 5 ********")
+                            print("\n******* Wrong value ********")
                             print("\n*********************************************")
                             ip_port_scan()
                     o2.port_scan(o2.target_host, int(enter))
@@ -95,7 +95,7 @@ def start():
                     if isinstance(start_port, int):
                         if 0 > start_port or start_port > 65535:
                             print("\n*********************************************")
-                            print("\n******* Wrong value po 4 ********")
+                            print("\n******* Wrong value ********")
                             print("\n*********************************************")
                             ip_port_scan()
                     elif isinstance(start_port, str):
@@ -105,7 +105,7 @@ def start():
                             ip_port_scan()
                         else:
                             print("\n*********************************************")
-                            print("\n******* Wrong value po 5 ********")
+                            print("\n******* Wrong value ********")
                             print("\n*********************************************")
                             ip_port_scan()
                     end_port = input("Enter the end port number: ")
@@ -116,7 +116,7 @@ def start():
                     if isinstance(end_port, int):
                         if start_port > end_port or end_port > 65535:
                             print("\n*********************************************")
-                            print("\n******* Wrong value po 6 ********")
+                            print("\n******* Wrong value ********")
                             print("\n*********************************************")
                             ip_port_scan()
                     elif isinstance(end_port, str):
@@ -126,7 +126,7 @@ def start():
                             ip_port_scan()
                         else:
                             print("\n*********************************************")
-                            print("\n******* Wrong value po 7 ********")
+                            print("\n******* Wrong value ********")
                             print("\n*********************************************")
                             ip_port_scan()
 
@@ -144,7 +144,7 @@ def start():
                     MQ(o2.por)
                 else:
                     print("\n*********************************************")
-                    print("\n******* Wrong value po 8 ********")
+                    print("\n******* Wrong value ********")
                     print("\n*********************************************")
                     o1.num = "1"
                     ip_port_scan()
@@ -170,7 +170,7 @@ def start():
                             print("ports you enter : ", port_list)
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 139 ********")
+                        print("\n******* Wrong value ********")
                         print("\n*********************************************")
                         port_chek()
                 elif isinstance(port, str):
@@ -182,7 +182,7 @@ def start():
                         ip_port_scan()
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 151********")
+                        print("\n******* Wrong value ********")
                         print("\n*********************************************")
                         port_chek()
             print(o2.target_host)
@@ -216,7 +216,7 @@ def start():
                         print("ports you enter : ", port_list)
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value 184 ********")
+                        print("\n******* Wrong value ********")
                         print("\n*********************************************")
                         port_check_for_top_50()
                 elif isinstance(port, str):
@@ -241,7 +241,7 @@ def start():
                         ip_port_scan()
                     else:
                         print("\n*********************************************")
-                        print("\n******* Wrong value po 3 ********")
+                        print("\n******* Wrong value ********")
                         print("\n*********************************************")
                         port_check_for_top_50()
             print(o2.target_host)
@@ -262,7 +262,7 @@ def start():
         if isinstance(por1, int):
             if por1 <= 0 or por1 > len(o2.final_scan_result):
                 print("\n*********************************************")
-                print("\n******* Wrong value for po 0 ********")
+                print("\n******* Wrong value ********")
                 print("\n*********************************************")
                 po()
             else:
@@ -279,7 +279,7 @@ def start():
                 MQ(por1)
             elif por1 not in ss and por1 != "*":
                 print("\n*********************************************")
-                print("\n******* Wrong value po 1 ********")
+                print("\n******* Wrong value ********")
                 print("\n*********************************************")
                 print(type(por1))
                 por1 = ""
@@ -306,7 +306,7 @@ def start():
                 MQ(o2.scan)
             else:
                 print("\n*********************************************")
-                print("\n******* Wrong value 5 ********")
+                print("\n******* Wrong value ********")
                 print("\n*********************************************")
                 sc()
 
@@ -328,7 +328,7 @@ def start():
                 MQ(o4.sniff)
             else:
                 print("\n*********************************************")
-                print("\n******* Wrong value 2 ********")
+                print("\n******* Wrong value ********")
                 print("\n*********************************************")
                 sf()
 
@@ -345,7 +345,7 @@ def start():
                 MQ(o1.num)
             else:
                 print("\n*********************************************")
-                print("\n******* Wrong value 2 ********")
+                print("\n******* Wrong value ********")
                 print("\n*********************************************")
                 gs()
 
@@ -366,7 +366,7 @@ def start():
                 MQ(o3.hlp)
             else:
                 print("\n*********************************************")
-                print("\n******* Wrong value 3 ********")
+                print("\n******* Wrong value ********")
                 print("\n*********************************************")
                 h()
 
@@ -380,7 +380,7 @@ def start():
                 MQ(o3.abot)
             else:
                 print("\n*********************************************")
-                print("\n******* Wrong value 4 ********")
+                print("\n******* Wrong value ********")
                 print("\n*********************************************")
                 ab()
 
@@ -397,7 +397,7 @@ def start():
                 MQ("q")
             else:
                 print("\n*********************************************")
-                print("\n******* Wrong value 1 ********")
+                print("\n******* Wrong value ********")
                 print("\n*********************************************")
                 o1.intfc = ""
                 start()
