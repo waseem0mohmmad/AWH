@@ -4,9 +4,7 @@ from scapy.layers.dns import DNS
 from scapy.layers.inet import TCP
 import scapy.all as scapy
 import socket
-import time
-import select
-import struct
+import os
 num_get_start = ''
 scan_scanning = ""
 class intro: # o1
@@ -191,20 +189,28 @@ class snifing:
             sniff_thread.start()
 
             while True:
+                print("\n-----------------------------------------------")
                 user_input = input("[+] S to stop sniffing [+]\n[+] F to save the results [+] \n")
-                if user_input.lower() == 's':
-                    sniff_thread.stop()
+                print("-----------------------------------------------\n")
+                if user_input.lower() == 's' or user_input.lower() == 'S':
                     break
-                elif user_input.lower() == 'f':
-                    file_name = input("Enter a file name to save the output: ")
-                    with open('sniff results'):
-                        with open('http'):
-                            with open(file_name, 'w') as f:
-                                for packet in packets:
-                                    f.write(packet + '\n')
-                        print("Results saved to file:", file_name + "_http.txt")
+                elif user_input.lower() == 'f' or user_input.lower() == 'F':
+                    try:
+                        sniff_thread.stop()  # Stop sniffing before asking for the file name
+                        file_name = input("Enter a file name to save the output: ")
+                        directory_path = f"sniff_results/{'http'}"  # Directory path for the chosen protocol
+                        os.makedirs(directory_path, exist_ok=True)  # Create the directory if it doesn't exist
+                        with open(os.path.join(directory_path, file_name), 'w') as f:
+                            for packet_summary in packets:
+                                f.write(packet_summary + '\n')
+                        print("Results saved to file:", os.path.join(directory_path, file_name))
                         break
-
+                    except IOError as e:
+                        print("An error occurred while saving the results:", e)
+                else:
+                    print("\n*********************************************")
+                    print("\n******* Wrong value ********")
+                    print("\n*********************************************")
         sniff_packets("eth0")
 
     def dns(self):
@@ -223,18 +229,30 @@ class snifing:
                 sniff_thread.start()
 
                 while True:
+                    print("\n-----------------------------------------------")
                     user_input = input("[+] S to stop sniffing [+]\n[+] F to save the results [+] \n")
+                    print("-----------------------------------------------\n")
                     if user_input.lower() == 's' or user_input.lower() == 'S':
                         sniff_thread.stop()
                         break
-                    elif user_input.lower() == 'f':
-                        file_name = input("Enter a file name to save the output: ")
-                        with open('sniff results'):
-                            with open(file_name, 'w') as f:
+                    elif user_input.lower() == 'f' or user_input.lower() == 'F':
+                        try:
+                            sniff_thread.stop()  # Stop sniffing before asking for the file name
+                            file_name = input("Enter a file name to save the output: ")
+                            directory_path = f"sniff_results/{'dns'}"  # Directory path for the chosen protocol
+                            os.makedirs(directory_path, exist_ok=True)  # Create the directory if it doesn't exist
+                            with open(os.path.join(directory_path, file_name), 'w') as f:
                                 for packet_summary in packets:
                                     f.write(packet_summary + '\n')
-                            print("Results saved to file:", file_name)
+                            print("Results saved to file:", os.path.join(directory_path, file_name))
                             break
+                        except IOError as e:
+                            print("An error occurred while saving the results:", e)
+                    else:
+                        print("\n*********************************************")
+                        print("\n******* Wrong value ********")
+                        print("\n*********************************************")
+
             except KeyboardInterrupt:
                 if sniff_thread is not None:
                     sniff_thread.stop()
@@ -257,20 +275,29 @@ class snifing:
                 sniff_thread.start()
 
                 while True:
+                    print("\n-----------------------------------------------")
                     user_input = input("[+] S to stop sniffing [+]\n[+] F to save the results [+] \n")
+                    print("-----------------------------------------------\n")
                     if user_input.lower() == 's' or user_input.lower() == 'S':
                         sniff_thread.stop()
                         break
                     elif user_input.lower() == 'f' or user_input.lower() == 'F':
-                        file_name = input("Enter a file name to save the output: ")
                         try:
-                            with open(file_name, 'w') as f:
-                                for packet in packets:
-                                    f.write(packet + '\n')
-                            print("Results saved to file:", file_name)
+                            sniff_thread.stop()  # Stop sniffing before asking for the file name
+                            file_name = input("Enter a file name to save the output: ")
+                            directory_path = f"sniff_results/{'ftp'}"  # Directory path for the chosen protocol
+                            os.makedirs(directory_path, exist_ok=True)  # Create the directory if it doesn't exist
+                            with open(os.path.join(directory_path, file_name), 'w') as f:
+                                for packet_summary in packets:
+                                    f.write(packet_summary + '\n')
+                            print("Results saved to file:", os.path.join(directory_path, file_name))
                             break
                         except IOError as e:
                             print("An error occurred while saving the results:", e)
+                    else:
+                        print("\n*********************************************")
+                        print("\n******* Wrong value ********")
+                        print("\n*********************************************")
             except KeyboardInterrupt:
                 if sniff_thread is not None:
                     sniff_thread.stop()
