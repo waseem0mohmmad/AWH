@@ -296,7 +296,9 @@ def start():
             elif o2.scan == "2": # 2-PORT SCANNING
                 po()
             elif o2.scan == "3": # 3-VULNERABILITY SCANNING
-                print("It will be futioer work")
+                print("\n-----------------------------------------------")
+                print("\nWill be add soon")
+                sc()
             elif o2.scan == "*":  # *-back
                 o2.scan = ""
                 gs()
