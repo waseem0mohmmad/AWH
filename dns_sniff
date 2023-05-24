@@ -1,0 +1,45 @@
+import scapy.all as scapy
+from scapy.layers.dns import DNS
+import os
+def dns():
+    def sniff_dns_packets(interface):
+        packets = []  # List to store captured packets
+        sniff_thread = None
+
+        def process_dns_packet(packet):
+            if packet.haslayer(DNS):
+                dns_packet = packet[DNS]
+                packets.append(dns_packet.summary())
+                print(dns_packet.summary())
+
+        try:
+            sniff_thread = scapy.AsyncSniffer(iface=interface, filter="port 53", prn=process_dns_packet)
+            sniff_thread.start()
+
+            while True:
+                user_input = input("[+] S to stop sniffing [+]\n[+] F to save the results [+] \n")
+                if user_input.lower() == 's' or user_input.lower() == 'S':
+                    sniff_thread.stop()
+                    break
+                elif user_input.lower() == 'f':
+                    file_name = input("Enter a file name to save the output: ")
+                    directory_path = f"sniff_results/{'dns'}"  # Directory path for the chosen protocol
+                    os.makedirs(directory_path, exist_ok=True) # Create the directory if it doesn't exist
+                    with open(os.path.join(directory_path, file_name), 'w') as f:
+                        for packet_summary in packets:
+                            f.write(packet_summary + '\n')
+                    print("Results saved to file:", os.path.join(directory_path, file_name))
+                    break
+                    # with open('sniff results'):
+                    #     with open('dns'):
+                    #         with open(file_name, 'w') as f:
+                    #             for packet_summary in packets:
+                    #                 f.write(packet_summary + '\n')
+                    #         print("Results saved to file:", file_name)
+                    #         break
+        except KeyboardInterrupt:
+            if sniff_thread is not None:
+                sniff_thread.stop()
+    sniff_dns_packets("eth0")
+dns()
+
