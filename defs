@@ -47,7 +47,7 @@ class scanning: # o2
              [5432, "PostgreSQL"], [563, "NNTPS"], [587, "SMTP"], [5900, "VNC"], [5901, "VNC"],[993, "IMAPS"],
              [995, "POP3S"], [1433, "MSSQL"], [1434, "MSSQL"], [1521, "Oracle"], [1720, "H.323"],[1723, "PPTP"],
              [3306, "MySQL"], [3389, "RDP"], [389, "LDAP"], [465, "SMTPS"], [5060, "SIP"], [5666, "NRPE"],[27015, "Steam"],
-             [27017, "MongoDB"], [28015, "Steam"], [3306, "MySQL"], [3389, "RDP"], [10000, "Webmin"]]
+             [27017, "MongoDB"], [28015, "Steam"], [3306, "MySQL"], [3389, "RDP"], [10000, "Webmin"], [144, "IMAP"]]
             #1434, "MSSQL (Browser Service)
             # #these is 39 ports we need 1 more at least
     def get_my_ip(self):
