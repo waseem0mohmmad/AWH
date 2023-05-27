@@ -118,7 +118,6 @@ class scanning: # o2
         print("-------------------------------------------\n")
 
     def display_port_result_range(self, final_result):
-        print(final_result)
         print("\n----------------------------------------------")
         print("| IP\t\t  | OPEN PORTS\t\t     |")
         print("|-----------------|--------------------------|")
