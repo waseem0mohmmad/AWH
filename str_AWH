@@ -22,7 +22,7 @@ def start():
 
         def ip_port_scan():
             print("------------------------------------------------")
-            o2.por = input("\n1- top 50 famous port\n2- choose port number\n3- choose multi ports number\n4- choose ports range\n5- all ports\nenter number : ")
+            o2.por = input("\n1- top 40 common port\n2- choose port number\n3- choose multi ports number\n4- choose ports range\n5- all ports\nenter number : ")
             if o2.por != "":  # (PORT SCANNING) chose ip number : --> 1- top 50 famous port 2- chose port number 3- chose ports range 4- all ports
                 if o2.por == "1":  # 1- top 50 famous port
                     print("\n------------------------------------------------")
