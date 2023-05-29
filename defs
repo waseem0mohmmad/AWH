@@ -312,11 +312,26 @@ class info: # o3
         print("1-How to scan the Network\n2-How to sniff the Network\n*-Back")
         self.hlp = input("enter numer : ")
     def help_scan(self):
-        print("")
+        print("scanning : Detecting and examining network systems and resources for security assessment purposes")
+        print("""First choose which kind of scanning you looking for.
+                 If you choose Network Scanning:
+                 A . It shows you what is the IP addresses in your network
+                 B. It shows you what is the Mac address in your network.\n
+                 If you choose port scanning:
+                 A . First, choose which IP address that you want to check on.
+                 B . Second, you have 5 main Options to scan the ports.\n
+                 Vulnerability scanning:
+                  future work""")
+        
+        
         
     def help_sniff(self):
-        print("")
-
+        print("sniffing : Capturing and analyzing network traffic to gain insights into the data being transmitted, including potential security vulnerabilities or threats")
+        print("""To sniff your network, you have three main protocols.
+                 Just choose which one that you want to scan the packets over it ,and the result will show up in clear text""")
+        
+        
+        
     def about(self):
         print("\n------------------------------------------------")
         print("This tool is specialized in a number of tasks that may benefit you in SCAN or SNIFF your private network or in your Penetration testing. ")
