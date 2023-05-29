@@ -156,9 +156,9 @@ class scanning: # o2
         elif result != 0:
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
             # self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
-            # print(self.final_port_result)
+            
         sock.close()
-        # self.display_port_result(self.final_port_result)
+     
 
 
 class snifing:
@@ -311,6 +311,11 @@ class info: # o3
         print("\n------------------------------------------------")
         print("1-How to scan the Network\n2-How to sniff the Network\n*-Back")
         self.hlp = input("enter numer : ")
+    def help_scan(self):
+        print("")
+        
+    def help_sniff(self):
+        print("")
 
     def about(self):
         print("\n------------------------------------------------")
