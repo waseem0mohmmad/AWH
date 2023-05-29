@@ -9,7 +9,7 @@ o1 = defs.intro()
 o2 = defs.scanning()
 o3 = defs.info()
 o4 = defs.snifing()
-oo = [o1.intfc,o1.num,o2.scan,o2.por,o2.por1,o3.help,o3.about,o4.sniff]
+oo = [o1.intfc,o1.num,o2.scan,o2.por,o2.por1,o3.help,o3.about,o3.help_scan,o3.help_sniff,o4.sniff]
 
 def start():
     def MQ(i):
@@ -354,10 +354,12 @@ def start():
         if o3.hlp != "": # (help) 1-How to scan the Network 2-How to sniff the Network *-Back
             if o3.hlp == "1":  # How to scan the Network
                 print("\n------------------------------------------------")
-                print("scan")
+                o3.help_scan()
+                h()
             elif o3.hlp == "2":  # How to sniff the Network
                 print("\n------------------------------------------------")
-                print("sniff")
+                o3.help_sniff()
+                h()
             elif o3.hlp == "*":  # *-back + main menu (M) (get started)
                 o3.hlp = "" # o1.intfc,o1.num,o2.scan,o2.por,o3.help,o3.about
                 o1.intfc = ""
