@@ -2,7 +2,7 @@
 import AWH_font_styl
 import defs
 AWH_font_styl.fontStyl()
-print("AWH giving you many option to sccane , sniffe , descover your network") #chang it another
+print("Unleash the power to secure, scan, and sniff, ensuring network resilience with every click") #chang it another
 
 ss = ["q","Q","m","M"]
 o1 = defs.intro()
