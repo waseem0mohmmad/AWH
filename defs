@@ -68,7 +68,7 @@ class scanning:  # o2
         print("my ip : ", self.my_ip, "| my network : ", self.my_network)  # your network
         s.close()
 
-    def get_ARP(self, ip, timeout=2):  # arp function
+    def get_ARP(self, ip, timeout=3):  # arp function
         arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
         self.scan_ans_ls = srp(arp_req, timeout=timeout, verbose=False)[0]
         for e in self.scan_ans_ls:
@@ -94,8 +94,7 @@ class scanning:  # o2
             print("--------------------------------------")
 
         self.get_my_ip()
-        self.get_ARP(self.my_network, 2)
-        # set(self.final_scan_result)
+        self.get_ARP(self.my_network, 3)
         display_scan_result(self.final_scan_result)
 
     def por_scan(self):
@@ -149,10 +148,8 @@ class scanning:  # o2
                     self.final_port_result_range.append({"ip": target_host, "port": port, "result": result})
                     self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if
                                                     x not in self.final_port_result_range[:i]]
-                    print("in if 137")
                 sock.close()
         else:  # fix the list that take the start and end from
-            print("in else 140")
             exit(self.por_scan())
         self.final_port_result_range = sorted(self.final_port_result_range,
                                               key=lambda x: x['port'])  # sort the results by port number
@@ -166,12 +163,9 @@ class scanning:  # o2
         result = sock.connect_ex((target_host, port))
         if result == 0:  # check if the connection was successful (i.e., the port is open)
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
-            print(self.final_port_result)
-            print("in if in port scan")
         elif result != 0:
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
             # self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
-
         sock.close()
 
 
