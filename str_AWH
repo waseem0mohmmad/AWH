@@ -2,14 +2,14 @@
 import AWH_font_styl
 import defs
 AWH_font_styl.fontStyl()
-print("Unleash the power to secure, scan, and sniff, ensuring network resilience with every click") #chang it another
+print("AWH giving you many option to sccane , sniffe , descover your network") #chang it another
 
 ss = ["q","Q","m","M"]
 o1 = defs.intro()
 o2 = defs.scanning()
 o3 = defs.info()
 o4 = defs.snifing()
-oo = [o1.intfc,o1.num,o2.scan,o2.por,o2.por1,o3.help,o3.about,o3.help_scan,o3.help_sniff,o4.sniff]
+oo = [o1.intfc,o1.num,o2.scan,o2.por,o2.por1,o3.help,o3.about,o4.sniff]
 
 def start():
     def MQ(i):
@@ -22,7 +22,7 @@ def start():
 
         def ip_port_scan():
             print("------------------------------------------------")
-            o2.por = input("\n1- top 40 common port\n2- choose port number\n3- choose multi ports number\n4- choose ports range\n5- all ports\nenter number : ")
+            o2.por = input("\n1- top 50 famous port\n2- choose port number\n3- choose multi ports number\n4- choose ports range\n5- all ports\nenter number : ")
             if o2.por != "":  # (PORT SCANNING) chose ip number : --> 1- top 50 famous port 2- chose port number 3- chose ports range 4- all ports
                 if o2.por == "1":  # 1- top 50 famous port
                     print("\n------------------------------------------------")
@@ -354,12 +354,10 @@ def start():
         if o3.hlp != "": # (help) 1-How to scan the Network 2-How to sniff the Network *-Back
             if o3.hlp == "1":  # How to scan the Network
                 print("\n------------------------------------------------")
-                o3.help_scan()
-                h()
+                print("scan")
             elif o3.hlp == "2":  # How to sniff the Network
                 print("\n------------------------------------------------")
-                o3.help_sniff()
-                h()
+                print("sniff")
             elif o3.hlp == "*":  # *-back + main menu (M) (get started)
                 o3.hlp = "" # o1.intfc,o1.num,o2.scan,o2.por,o3.help,o3.about
                 o1.intfc = ""
