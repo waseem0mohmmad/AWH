@@ -1,6 +1,16 @@
 import subprocess
 import random
+
 def fontStyl():
-    font = ["big", "slant", "standard"]
-    fon = random.choice(font)
-    subprocess.call("figlet -f " + fon + " 'WISE -- AWH'", shell=True)
+    try:
+        font = ["big", "slant", "standard"]
+        fon = random.choice(font)
+        subprocess.call("figlet -f " + fon + " 'WISE -- AWH'", shell=True)
+    except:
+        subprocess.call("cd /usr/share", shell=True)
+        subprocess.call("git clone https://github.com/xero/figlet-fonts", shell=True)
+        subprocess.call("mv figlet-fonts/* figlet && rm –rf figlet-fonts", shell=True)
+        subprocess.call("gedit /etc/bash.bashrc", shell=True)
+        fontStyl()
+
+
