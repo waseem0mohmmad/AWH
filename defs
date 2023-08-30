@@ -5,16 +5,13 @@ from scapy.layers.inet import TCP
 import scapy.all as scapy
 import socket
 import os
-
 num_get_start = ''
 scan_scanning = ""
-
-
-class intro:  # o1
+class intro: # o1
     num = ''
     intfc = ''
 
-    def start_all(self):  # main menu (M)
+    def start_all(self): #main menu (M)
         print("\n------------------------------------------------")
         print("[+] *  Back for previous page\n[+] M  For main menu\n[+] Q  For quit the tool ")
         print("------------------------------------------------")
@@ -27,10 +24,9 @@ class intro:  # o1
         self.num = input("enter numer : ")
 
 
-class scanning:  # o2
-    ss = ["q", "Q", "m", "M", "*"]
+class scanning: # o2
     scan = ""
-    my_ip = ""  # 192.168.26.131
+    my_ip = "" #192.168.26.131
     my_network = ""
     subnet_mask = ""
     final_scan_result = []
@@ -45,17 +41,14 @@ class scanning:  # o2
     port_ans_ls = []
     port_ans_ls_range = []
 
-    ports = [[22, "SSH"], [23, "Telnet"], [25, "SMTP"], [53, "DNS"], [80, "HTTP"], [110, "POP3"], [119, "NNTP"],
-             [123, "NTP"],
-             [135, "MSRPC"], [139, "NetBIOS"], [143, "IMAP"], [443, "HTTPS"], [445, "SMB"], [465, "SMTPS"],
-             [5060, "SIP"],
-             [5432, "PostgreSQL"], [563, "NNTPS"], [587, "SMTP"], [5900, "VNC"], [5901, "VNC"], [993, "IMAPS"],
-             [995, "POP3S"], [1433, "MSSQL"], [1434, "MSSQL"], [1521, "Oracle"], [1720, "H.323"], [1723, "PPTP"],
-             [3306, "MySQL"], [3389, "RDP"], [389, "LDAP"], [465, "SMTPS"], [5060, "SIP"], [5666, "NRPE"],
-             [27015, "Steam"],
-             [27017, "MongoDB"], [28015, "Steam"], [3306, "MySQL"], [3389, "RDP"], [10000, "Webmin"], [144, "IMAP"]]
-
-    # 1434, "MSSQL (Browser Service)
+    ports = [[22, "SSH"], [23, "Telnet"], [25, "SMTP"], [53, "DNS"], [80, "HTTP"], [110, "POP3"], [119, "NNTP"],[123, "NTP"],
+             [135, "MSRPC"], [139, "NetBIOS"], [143, "IMAP"], [443, "HTTPS"], [445, "SMB"], [465, "SMTPS"],[5060, "SIP"],
+             [5432, "PostgreSQL"], [563, "NNTPS"], [587, "SMTP"], [5900, "VNC"], [5901, "VNC"],[993, "IMAPS"],
+             [995, "POP3S"], [1433, "MSSQL"], [1434, "MSSQL"], [1521, "Oracle"], [1720, "H.323"],[1723, "PPTP"],
+             [3306, "MySQL"], [3389, "RDP"], [389, "LDAP"], [465, "SMTPS"], [5060, "SIP"], [5666, "NRPE"],[27015, "Steam"],
+             [27017, "MongoDB"], [28015, "Steam"], [3306, "MySQL"], [3389, "RDP"], [10000, "Webmin"]]
+            #1434, "MSSQL (Browser Service)
+            # #these is 39 ports we need 1 more at least
     def get_my_ip(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("192.168.26.2", 80))
@@ -63,19 +56,17 @@ class scanning:  # o2
         subnet_mask = "255.255.255.0"
         self.my_ip = my_ip
         my_ip = '.'.join(my_ip.split('.')[:-1])  # 192.168.26
-        self.my_network = my_ip + '.0/24'
+        self.my_network = my_ip + '.0/24' #192.168.26.0/24
         print("my ip : ", self.my_ip, "| my network : ", self.my_network)  # your network
         s.close()
 
-    def get_ARP(self, ip, timeout=3):  # arp function
+    def get_ARP(self, ip, timeout=2):  # arp function
         arp_req = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(pdst=ip)  # try ETH_P_ARP ==> Ether
         self.scan_ans_ls = srp(arp_req, timeout=timeout, verbose=False)[0]
         for e in self.scan_ans_ls:
             self.final_scan_result.append({"ip": e[1].psrc, "mac": e[1].hwsrc, "HOSTNAME": None, "VENDOR_IP": None})
-            self.final_scan_result = [x for i, x in enumerate(self.final_scan_result) if
-                                      x not in self.final_scan_result[:i]]
+            self.final_scan_result = [x for i, x in enumerate(self.final_scan_result) if x not in self.final_scan_result[:i]]
         return self.final_scan_result
-
     def scanning(self):
         print("\n------------------------------------------------")
         print("1-NETWORK SCANNING\n2-PORT SCANNING\n3-VULNERABILITY SCANNING\n*-back")
@@ -89,11 +80,11 @@ class scanning:  # o2
             print("| IP\t\t | MAC ADDRESS\t     |")
             print("|----------------|-------------------|")
             for i in result:
-                print("| {:<15}| {}".format(i["ip"], i["mac"]), end=" |\n")
+                print("| {:<15}| {}".format(i["ip"], i["mac"]),end=" |\n")
             print("--------------------------------------")
-
         self.get_my_ip()
-        self.get_ARP(self.my_network, 3)
+        self.get_ARP(self.my_network, 2)
+        #set(self.final_scan_result)
         display_scan_result(self.final_scan_result)
 
     def por_scan(self):
@@ -104,19 +95,17 @@ class scanning:  # o2
             print("|\t  IP\t     |")
             print("|--------------------|")
             for i, ip in enumerate(result):
-                print('|', i + 1, '-', "{:<15}".format(ip["ip"]), end="|\n")
+                print('|', i+1, '-', "{:<15}".format(ip["ip"]),end="|\n")
             print("----------------------")
-
         if len(self.final_scan_result) == 0:
             self.get_my_ip()
             self.get_ARP(self.my_network, 2)
-            self.final_scan_result = [x for i, x in enumerate(self.final_scan_result) if
-                                      x not in self.final_scan_result[:i]]
+            self.final_scan_result = [x for i, x in enumerate(self.final_scan_result) if x not in self.final_scan_result[:i]]
             display_scan_result(self.final_scan_result)
         elif len(self.final_scan_result) != 0:
             display_scan_result(self.final_scan_result)
 
-    def display_port_result(self, final_result):
+    def display_port_result(self,final_result):
         print("\n-------------------------------------------")
         print("|IP\t\t| PORT \t| STATUS\t  |")
         print("|---------------|-------|-----------------|")
@@ -128,6 +117,7 @@ class scanning:  # o2
         print("-------------------------------------------\n")
 
     def display_port_result_range(self, final_result):
+        print(final_result)
         print("\n----------------------------------------------")
         print("| IP\t\t  | OPEN PORTS\t\t     |")
         print("|-----------------|--------------------------|")
@@ -145,16 +135,15 @@ class scanning:  # o2
                 result = sock.connect_ex((target_host, port))
                 if result == 0:  # check if the connection was successful (i.e., the port is open)
                     self.final_port_result_range.append({"ip": target_host, "port": port, "result": result})
-                    self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if
-                                                    x not in self.final_port_result_range[:i]]
+                    self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if x not in self.final_port_result_range[:i]]
+                    print("in if 137")
                 sock.close()
-        else:  # fix the list that take the start and end from
+        else:#fix the list that take the start and end from
+            print("in else 140")
             exit(self.por_scan())
-        self.final_port_result_range = sorted(self.final_port_result_range,
-                                              key=lambda x: x['port'])  # sort the results by port number
-        self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if
-                                        x not in self.final_port_result_range[:i]]
-        self.display_port_result_range(self.final_port_result_range)  # chek if it shoud be dectionare lis
+        self.final_port_result_range = sorted(self.final_port_result_range,key=lambda x: x['port'])  # sort the results by port number
+        self.final_port_result_range = [x for i, x in enumerate(self.final_port_result_range) if x not in self.final_port_result_range[:i]]
+        self.display_port_result_range(self.final_port_result_range)#chek if it shoud be dectionare lis
 
     def port_scan(self, target_host, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -162,18 +151,21 @@ class scanning:  # o2
         result = sock.connect_ex((target_host, port))
         if result == 0:  # check if the connection was successful (i.e., the port is open)
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
+            print(self.final_port_result)
+            print("in if in port scan")
         elif result != 0:
             self.final_port_result.append({"ip": target_host, "port": port, "result": result})
             # self.final_port_result = [x for i, x in enumerate(self.final_port_result) if x not in self.final_port_result[:i]]
+            # print(self.final_port_result)
         sock.close()
+        # self.display_port_result(self.final_port_result)
 
 
 class snifing:
     sniff = ''
-
     def sniffing(self):
         print("\n------------------------------------------------")
-        print("1-HTTP\n2-DNS\n3-FTP\n*-back")  # 1-HTTP 2-dns 3-ftp 4-ssh *-back
+        print("1-HTTP\n2-DNS\n3-FTP\n*-back")#1-HTTP 2-dns 3-ftp 4-ssh *-back
         self.sniff = input("enter number : ")
 
     def http(self):
@@ -218,7 +210,6 @@ class snifing:
                     print("\n*********************************************")
                     print("\n******* Wrong value ********")
                     print("\n*********************************************")
-
         sniff_packets("eth0")
 
     def dns(self):
@@ -313,36 +304,16 @@ class snifing:
         sniff_ftp_packets("eth0")
 
 
-class info:  # o3
+class info: # o3
     hlp = ''
     abot = ''
-
     def help(self):
         print("\n------------------------------------------------")
         print("1-How to scan the Network\n2-How to sniff the Network\n*-Back")
         self.hlp = input("enter numer : ")
 
-    def help_scan(self):
-        print("[+] Scanning : Detecting and examining network systems and resources for security assessment purposes.")
-        print("""First choose which kind of scanning you looking for.
-If you choose Network Scanning:
-  A .It shows you what is the IP addresses in your network
-  B .It shows you what is the Mac address in your network.\n
-If you choose port scanning:
-  A .First, choose which IP address that you want to check on.
-  B .Second, you have 5 main Options to scan the ports.\n
-Vulnerability scanning:
-< future work >""")
-
-    def help_sniff(self):
-        print(
-            "[+] Sniffing : Capturing and analyzing network traffic to gain insights into the data being transmitted, including potential security vulnerabilities or threats.")
-        print("""To sniff your network, you have three main protocols.
-Just choose which one that you want to scan the packets over it ,and the result will show up in clear text""")
-
     def about(self):
         print("\n------------------------------------------------")
-        print(
-            "This tool is specialized in a number of tasks that may benefit you in SCAN or SNIFF your private network or in your Penetration testing. ")
-        print("created by:\n.Ahmad Almasharqa \n.Hanin Hashaikah \n.Waseem Mohammad ")
+        print("This tool is specialized in a number of tasks that may benefit you in SCAN or SNIFF your private network or in your Penetration testing. ")
+        print("created by: \n.Waseem Mohammad \n.Hanin Hashaikah \n Under supervision : Mis. Laila Al-Qaisi")
         self.abot = input("\npress * to back to main menu\n")
